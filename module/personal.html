@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../css/user.css" />
+		<script src="../fonts/iconfont.js"></script>
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<div class="header relative">
+				<a href="user.html" class="fl">
+					<div class="fl table header-row">
+						<div class="table-cell">
+							<img class="portrait" :src="data.headpic||'../img/icon/portrait.png'" />
+						</div>
+					</div>
+				</a>
+				<a :href="isfansnum" class="fl">
+					<div class="fl table header-row">
+						<div class="table-cell">
+							<p class="name">{{data.nikename}}</p>
+							<p class="fans" v-if="data.fansnum">粉丝量 {{data.fansnum}}</p>
+						</div>
+					</div>
+				</a>
+
+				<!--</a>-->
+				<div class="head-btn absolute" v-if="data.shopstatus==0">
+					<a href="../checkin/html/checkin.html">立即开店</a>
+				</div>
+			</div>
+			<ul class="box">
+				<li class="item-row relative">
+					<a href="tab_top.html?id=1">
+						<div class="fl item-row-icon">
+							<svg class="iconfont" aria-hidden="true">
+								<use xlink:href="#icon-zhengliicon-19"></use>
+							</svg>
+						</div>
+						<div class="item-row-name">
+							我买到的
+						</div>
+					</a>
+				</li>
+				<li class="item-row relative">
+					<a href="collection.html">
+						<div class="fl item-row-icon">
+							<svg class="iconfont" aria-hidden="true">
+								<use xlink:href="#icon-shoucang-copy"></use>
+							</svg>
+						</div>
+						<div class="item-row-name">
+							收藏商品
+						</div>
+					</a>
+				</li>
+				<li class="item-row relative">
+					<a href="cart.html">
+						<div class="fl item-row-icon">
+							<svg class="iconfont" aria-hidden="true">
+								<use xlink:href="#icon-zhengliicon-"></use>
+							</svg>
+						</div>
+						<div class="item-row-name">
+							购物车
+						</div>
+					</a>
+				</li>
+				<li class="item-row relative">
+					<a href="address.html">
+						<div class="fl item-row-icon">
+							<svg class="iconfont" aria-hidden="true">
+								<use xlink:href="#icon-weizhi"></use>
+							</svg>
+						</div>
+						<div class="item-row-name">
+							我的地址
+						</div>
+					</a>
+				</li>
+				<li class="item-row relative" @tap="shareHref">
+					<!--<a href="test.html">-->
+						<div class="fl item-row-icon">
+							<img src="../img/icon/20190220172329.png"/>
+						</div>
+						<div class="item-row-name">
+							分享
+						</div>
+					<!--</a>-->
+				</li>
+			</ul>
+			<div class="item-row relative item-tag" v-if="data.shopstatus==3">
+				<a href="_www/checkin/html/seller.html">
+					<div class="fl item-row-icon">
+						<svg class="iconfont" aria-hidden="true">
+							<use xlink:href="#icon-dianpu"></use>
+						</svg>
+					</div>
+					<div class="item-row-name">
+						我是商家
+					</div>
+				</a>
+			</div>
+			<div class="item-row relative item-tag">
+				<a href="../setup/html/index.html">
+					<div class="fl item-row-icon">
+						<svg class="iconfont" aria-hidden="true">
+							<use xlink:href="#icon-shezhi"></use>
+						</svg>
+					</div>
+					<div class="item-row-name">
+						设置
+					</div>
+				</a>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				window.addEventListener('refresh', function(e) {
+					pulldownRefresh();
+				});
+				var clickNum = 0;
+				mui.back = function(event) {
+					clickNum++;
+					clickNum > 1 ? plus.runtime.quit() : mui.toast("再按一次退出应用");
+					setTimeout(function() {
+						clickNum = 0
+					}, 2000);
+					return false;
+				};
+				mui('body').on('tap', 'a', function() {
+					var href = this.getAttribute('href');
+					var id = this.getAttribute("data-wid") || href;
+					if(href && ~href.indexOf('.html')) {
+						var options = {
+							styles: {
+								popGesture: "close"
+							},
+						};
+						mui.openWindow(href, id, options);
+					}
+				});
+				var vm = new Vue({
+					el: "#app",
+					data: {
+						data: '',
+						shares:null,
+					},
+					mounted:function(){
+						pulldownRefresh();
+						this.updateSerivces();
+					},
+					methods: {
+						updateSerivces:function(){
+				            plus.share.getServices( function(s){
+				                vm.shares={};
+				                for(var i in s){
+				                    var t=s[i];
+				                    vm.shares[t.id]=t;
+				                }
+				            }, function(e){
+				                alert("获取分享服务列表失败："+e.message );
+				            } );
+				        },
+						shareHref:function(){
+				            var shareBts=[];
+				            // 更新分享列表
+				            var ss=vm.shares['weixin'];
+				            ss&&ss.nativeClient&&(shareBts.push({title:'微信朋友圈',s:ss,x:'WXSceneTimeline'}),
+				            shareBts.push({title:'微信好友',s:ss,x:'WXSceneSession'}));
+				            ss=vm.shares['qq'];
+				            ss&&ss.nativeClient&&shareBts.push({title:'QQ',s:ss});
+				            // 弹出分享列表
+				            shareBts.length>0?plus.nativeUI.actionSheet({title:'分享app',cancel:'取消',buttons:shareBts},function(e){
+				                (e.index>0)&&vm.shareAction(shareBts[e.index-1],true);
+				            }):plus.nativeUI.alert('当前环境无法支持分享链接操作!');
+				        },
+				        shareAction:function(sb,bh) {
+				            if(!sb||!sb.s){
+				                mui.toast("无效的分享服务！");
+				                return;
+				            }
+							var msg={
+								type:sb.s.description=='QQ'?'text':'web',
+								title:'优货网app客户端下载',
+								content:'我正在使用优货网APP，进货方便，出货快速，还免费开店。邀你来一起体验:',
+								thumbs:'http://app.youhuowang.shop/static/defaultimg/logo.jpg',
+								href:'http://app.youhuowang.shop/static/html/',
+								extra:{scene:sb.x}
+							};
+				            if ( sb.s.authenticated ) {
+				                vm.shareMessage(msg,sb.s);
+				            } else {
+				                sb.s.authorize(function(){
+				                    vm.shareMessage(msg,sb.s);
+				               	},function(e){
+				                    mui.toast("认证授权失败："+e.code+" - "+e.message );
+				                });
+				            }
+				        },
+				        shareMessage:function(msg,s){
+				            s.send( msg, function(){
+				                mui.toast("分享到\""+s.description+"\"成功！ " );
+				            }, function(e){
+				                mui.toast( "分享到\""+s.description+"\"失败: ");
+				            } );
+				        }
+					},
+					computed: {
+						isfansnum: function() {
+							return this.data.shopstatus == 3 ? 'shopFansList.html' : '';
+						}
+					}
+				});
+
+				function pulldownRefresh() {
+					yh.ajax({
+						url: '/userCentry',
+						type: "get",
+						fn: function(reg) {
+							vm.data = reg;
+						}
+					}, true);
+				};
+			})
+		</script>
+	</body>
+
+</html>

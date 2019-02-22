@@ -1,0 +1,145 @@
+.header{
+	width: 100vw;
+	height: 0.46rem;
+	line-height: 0.46rem;
+	top: 0;	
+	color: rgba(0,0,0,1);
+	z-index: 9;
+}
+
+.mui-action-back,.header .icon-youixn{
+	padding:0 0.16rem;
+	font-size: 0.2rem;
+}
+.header .icon-youixn{
+	font-size: 0.22rem;
+	font-weight: bold;
+}
+.header-title{
+	height: 100%;
+	left: 0.5rem;
+	right: 0.5rem;
+	text-align: center;
+	font-size: 0.18rem;
+	/*display: none;*/
+}
+.main{
+	width: 100vw;
+	font-size: 0.2rem;
+}
+.head-bg{
+	width: 100vw;
+	height: 3.3rem;
+	background:url(../imges/bg-pattern.jpg)no-repeat;
+	background-size: 100% 100%;
+}
+.pullupRefresh{
+	width: 100vw;
+	height: 0.45rem;
+	line-height: 0.45rem;
+	font-size: 0.18rem;
+	color: #484848;
+	text-align: center;
+}
+.carousel{
+	background: #F5A623;
+	overflow: hidden;
+	margin-top: -1px;
+}
+.carousel .title{
+	height: 0.25rem;
+	line-height: 0.25rem;
+	font-size: 0.18rem;
+	font-weight: 500;
+	color: #FFFFFF;
+	text-align: center;
+	margin-bottom: 0.21rem;
+}
+.carousel .title:before{
+	content:'。。。。';
+	position: absolute;
+	width: 100%;
+	color: #fff;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: -.1rem;
+	font-size: .18rem;
+	margin-left: 0.05rem;
+}
+.carousel-box{
+	padding: 0 0.25rem;
+}
+.carousel-list{
+	width: 1.45rem;
+	height: 1.58rem;	
+	margin-bottom: 0.26rem;
+}
+.carousel-list:nth-child(odd){
+	float: left;
+}
+.carousel-list:nth-child(even){
+	float: right;
+}
+.carousel-list img{
+	width: 100%;
+	height: 100%;
+	border-radius: 0.1rem;
+}
+.carousel-list:before{
+	content: '';
+	width: 1.45rem;
+	height: 1.58rem;
+	position: absolute;
+	left: 0.06rem;
+	top: 0.04rem;
+	border-radius: 0.1rem;
+	border: 1px solid #FFD36C;
+	
+}
+.boox-title{
+	height: 0.44rem;
+	background: url(../imges/19645CC9-AB15-4F33-8EC0-1B3884491C9B.png)no-repeat;
+	background-size: 100% 100%;
+}
+.boox-list{
+	width: 100vw;
+	height: 1.4rem;
+	padding:0.11rem;
+	padding-right: 0.34rem;
+	background: #FFFFFF;
+	margin-bottom: 1px;
+}
+.boox-list .img{
+	width: 1.09rem;
+	height: 1.18rem;
+	margin-right:0.1rem ;
+}
+.boox-list-goodscover{
+	margin-left: 1.29rem;
+	height: 100%;
+}
+.boox-list-goodscover .title{
+	font-size: 0.16rem;
+	font-weight: 400;
+	color: #222222;
+	margin-bottom: 0.1rem;
+}
+
+.boox-list-goodscover .price {
+	top: .6rem;
+	font-size: 0.2rem;
+	font-weight: 600;
+	color: #FF6000;
+}
+
+.boox-list-goodscover .collection {
+	top: .75rem;
+	right: 0;
+	font-size: 0.3rem;
+	opacity: .5;
+}
+
+.boox-list-goodscover .active {
+	color: #F27428;
+	opacity: 1;
+}

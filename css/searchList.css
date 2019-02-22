@@ -1,0 +1,188 @@
+.header{
+	width: 100vw;
+	height: .46rem;
+	background: #FFFFFF;
+	z-index: 10;
+}
+.header .block{
+	width: 0.41rem;
+	height: 0.46rem;
+	line-height: 0.46rem;
+	padding-left: 0.2rem;
+}
+.search{
+	width: 2.6rem;
+	height: 0.46rem;
+}
+.input-row{
+	width: 100%;
+	height: 0.27rem;
+	line-height: .27rem;
+	top: 50%;
+	margin-top: -.135rem;
+	background:rgba(239,239,239,1);
+	border-radius:0.11rem;
+	border:1px solid rgba(242,242,242,1);
+}
+.search-icon{
+	width: 0.43rem;
+	line-height: 0.27rem;
+	padding-left: 0.1rem;	
+}
+.search-input{
+	margin-left: 0.43rem;
+	height: 100%;
+	font-size: 0.14rem;
+	padding-right: 0.1rem;
+}
+.search-input input{
+	width: 100%;
+	font-size: 0.16rem;
+	background:rgba(239,239,239,1);
+}
+.header .send{
+	margin-left: 3.01rem;
+	height: 0.46rem;
+	line-height: .46rem;
+	padding-right: 0.2rem;
+	text-align: right;
+	color: #000000;
+}
+.checkbox{
+	height: 0.45rem;
+	background: #F5F5F5;
+}
+.checkbox-row{
+	left: 50%;
+}
+.checkbox-input{
+	height: .45rem;
+	line-height: .46rem;
+	padding-left: 0.23rem;
+	font-size: 0.16rem;
+	color: #222222;
+}
+.checkbox-input:before{
+	content: '';
+	width: 0.17rem;
+	height: 0.17rem;
+	position: absolute;
+	left: 0;
+	top:50%;
+	margin-top: -.085rem;
+	background: url(../img/weigouxuan.png)no-repeat;
+	background-size: 100% 100%;
+}
+.checkbox-input:last-child{
+	margin-left: 0.19rem;
+}
+.checkbox-row .active:before{
+	background: url(../img/gouxuan.png)no-repeat;
+	background-size: 100% 100%;
+}
+.main{
+	padding-top:0.91rem;
+}
+.follow{
+	overflow: hidden;
+}
+.follow-list{
+	width: 100vw;
+	height: 0.8rem;
+	padding-left: 0.2rem;
+	background: #FFFFFF;
+	margin-bottom: 0.1rem;
+}
+.follow-list .img{
+	width: 0.58rem;
+	height: 0.58rem;
+	border-radius:0.07rem;
+}
+.follow-list .img img{
+	width: 100%;
+	height: 100%;
+}
+.follow-list-con{
+	margin-left: 0.71rem;
+	height: .58rem;
+}
+.follow-list-details{
+	font-weight: 400;
+}
+.follow-list-details .name{
+	font-size: 0.14rem;
+	color: #4D4D4E;
+	margin-bottom: 0.05rem;
+}
+.follow-list-details p{
+	line-height: 0.17rem;
+	font-size: 0.12rem;
+}
+.follow-list-details .iconfont{
+	font-size: 0.1rem;
+}
+.follow-list-btn div{
+	width: 0.88rem;
+	height: 0.24rem;
+	line-height: 0.24rem;
+	font-size: 0.12rem;
+	font-weight: 500;
+	text-align: center;
+	color: #ABACAD;
+	border-radius: .10rem 0 0  .10rem;
+	border:1px solid rgba(202,200,200,1);
+}
+.follow-list-btn div:last-child{
+	margin-top: 0.1rem;
+}
+.follow-list-btn .available{
+	border:0;
+	color: #FFFFFF;
+	background:linear-gradient(25deg,rgba(250,217,97,1) 0%,rgba(240,94,28,1) 100%);
+}
+.commodity{
+	padding: 0 0.1rem;
+}
+.commodity-list{
+	width: 1.7rem;
+	height: 2.38rem;
+	overflow: hidden;
+	border-radius: 0.08rem;
+	font-weight: 400;
+	background: #FFFFFF;
+	margin-bottom: 0.1rem;
+}
+.commodity-list:nth-child(odd){
+	float: left;
+}
+.commodity-list:nth-child(even){
+	float: right;
+}
+.commodity-list img{
+	width: 100%;
+	height: 1.86rem;	
+}
+.commodity-list .name{
+	padding: 0 0.1rem;
+	margin-top: 0.03rem;
+	font-size: 0.1rem;
+	color: #2F2F2F;
+}
+.commodity-list .price{
+	width: 100%;
+	bottom: 0;
+	font-size: 0.12rem;
+	padding-left: 0.1rem;
+	color: #FF6000;
+}
+.commodity-list .Collection{
+	display: block;
+	padding: 0.1rem;
+	bottom: -.05rem;
+	right: 0;
+	font-size: 0.14rem;
+	color: #555555;
+}
+.commodity-list .active{
+	color: #F27428;
+}

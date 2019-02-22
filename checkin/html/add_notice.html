@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+		<style type="text/css">
+			.header {
+				width: 100vw;
+				height: 0.46rem;
+				line-height: .46rem;
+				color: #5B5B5B;
+				top: 0;
+				z-index: 10;
+				font-size: 0.18rem;
+				background: #FFFFFF;
+			}
+			.header .mui-action-back {
+				padding-left: 0.2rem;
+				font-size: 0.16rem;
+			}
+			.header .title {
+				position: absolute;
+				height: 100%;
+				left: 0.5rem;
+				right: 0.5rem;
+				text-align: center;
+			}
+			.main{
+				padding-top: .56rem;
+				overflow: hidden;
+				padding-bottom: 0.48rem;
+				font-size: 0.12rem;
+			}
+			.main textarea{
+				width: 100%;
+				height: 1.17rem;
+				padding: 0.1rem;
+				background: #FFFFFF;
+				border: 0;
+				outline:none;
+				font-size:0.16rem;
+				resize:none
+			}
+			.button{
+				width: 100vw;
+				height: 0.48rem;
+				line-height: 0.48rem;
+				text-align: center;
+				font-size: 0.16rem;
+				color: #FFFFFF;
+				background: #F5A623;
+				bottom: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">编辑公告</div>
+		</header>
+		<div class="main" id="app" v-cloak>
+			<textarea maxlength="30" v-model="content"  placeholder="此公告在店铺首页展示。"></textarea>
+			<button class="button fixed" @click="send">
+				保存
+			</button>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function(){
+				var vm=new Vue({
+					el:'#app',
+					data:{
+						content:'',
+					},
+					methods:{
+						send:function(){
+							if(vm.content.length<=9){
+								mui.toast('公告不能低于10个字');
+								return;
+							}
+							yh.ajax({
+								url: "/addShopNotice",
+								type: "POST",
+								data:{
+									content:vm.content
+								},
+								fn: function(data) {
+									mui.toast("添加成功");
+									var view=plus.webview.getWebviewById('notice.html');//
+									mui.fire(view,'refresh');  
+									mui.back();
+								}
+							}, true);
+						}
+					}
+				})
+			})
+		</script>
+	</body>
+</html>

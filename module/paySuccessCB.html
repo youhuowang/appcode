@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/beecloud.css" />
+		<style type="text/css">
+			.pay-img {
+				width: 1.38rem;
+				height: 0.85rem;
+				margin: 0 auto;
+				margin-top: 0.84rem;
+				border: 1px dashed;
+			}
+			
+			.pay-state {
+				text-align: center;
+				font-size: 0.24rem;
+				color: #070707;
+				margin: .08rem 0;
+			}
+			
+			.price {
+				text-align: center;
+				font-size: 0.14rem;
+				color: #F27428;
+			}
+			
+			.footer-btn {
+				font-size: 0.16rem;
+				color: #898989;
+				text-align: center;
+				margin-top: 0.23rem;
+			}
+			
+			.footer-btn a {
+				color: #898989;
+			}
+			
+			.footer-btn div {
+				display: inline-block;
+				width: 0.8rem;
+				height: 0.3rem;
+				line-height: .3rem;
+				border: 1px solid;
+				border-radius: 0.08rem;
+			}
+			
+			.footer-btn .left {
+				margin-right: 0.2rem;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<header class="header fixed">
+				<div class="title">{{title}}</div>
+			</header>
+			<div class="main">
+				<img class="pay-img" src="../img/pay.png" />
+				<div class="pay-state">
+					{{state}}
+				</div>
+				<div class="price">
+					实付：¥ {{data.totalprice}}
+				</div>
+				<div class="footer-btn">
+					<div class="left" @click="goMain">返回首页</div>
+					<div>
+						<a :href="'orderDetails.html?id='+data.orderid">查看订单</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				mui.init({
+					keyEventBind: {
+						backbutton: false //关闭back按键监听
+					}
+				});
+				var vm = new Vue({
+					el: "#app",
+					data: {
+						data: '',
+						state: '',
+						title: '',
+					},
+					methods: {
+						goMain: function(id) { //返回首页
+// 							var index=plus.webview.getLaunchWebview();//获得初始窗口
+// 							console.log(index);
+// 							plus.webview.show(index);//打开初始窗口
+							var webview = plus.webview.getWebviewById(plus.runtime.appid);
+							if(webview) {
+								webview.hide('none');
+								mui.fire(webview, 'refresh', {
+									index: 0
+								});
+								webview.show('slide-in-rihgt');
+							}
+							plus.webview.currentWebview().hide();
+							plus.webview.currentWebview().close();
+						}
+					}
+				})
+				yh.ajax({
+					url: "/paySuccess",
+					data: {
+						orderno: yh.getQueryString('id'),
+					},
+					type: "POST",
+					fn: function(data) {
+						vm.data = data;
+						vm.title = data.paystatus == 1 ? '支付失败' : '支付成功';
+						vm.state = data.paystatus == 1 ? '支付失败啦' : '客官支付成功啦';
+					}
+				}, true);
+			})
+		</script>
+	</body>
+
+</html>

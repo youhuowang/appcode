@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/new_address.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mobileSelect.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<header class="header fixed">
+				<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+				<div class="title">添加地址</div>
+			</header>
+			<div class="main">
+				<form>
+					<ul class="form">
+						<li class="form-list linkman_one">
+							<div class="from-nme fl">
+								联系人1：
+							</div>
+							<div class="input-row">
+								<input type="text" @focus='remove($event)' v-model="linkman_one" placeholder="*必填" />
+							</div>
+						</li>
+						<li class="form-list linktel_one">
+							<div class="from-nme fl">
+								联系电话1：
+							</div>
+							<div class="input-row">
+								<input type="tel" @focus='remove($event)' v-model="linktel_one" placeholder="*必填" />
+							</div>
+						</li>
+						<li class="form-list linkman_two">
+							<div class="from-nme fl">
+								联系人2：
+							</div>
+							<div class="input-row">
+								<input type="text" @focus='remove($event)' v-model="linkman_two" placeholder="选填" />
+							</div>
+						</li>
+						<li class="form-list linktel_two">
+							<div class="from-nme fl">
+								联系电话2：
+							</div>
+							<div class="input-row">
+								<input type="tel" @focus='remove($event)' v-model="linktel_two" placeholder="选填" />
+							</div>
+						</li>
+						<li class="form-list next">
+							<div class="from-nme fl">
+								所在地：
+							</div>
+							<div class="input-row overflow" id="trigger" @touchend="nextremove($event)">{{local}}</div>
+						</li>
+						<li class="form-list address">
+							<div class="from-nme fl">
+								详细地址：
+							</div>
+							<div class="input-row">
+								<input type="text" @focus='remove($event)' v-model="address" placeholder="请填写收货地址" />
+							</div>
+						</li>
+				</form>
+				
+			</div>
+			<div class="send fixed" @click="send">
+				保存
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/mobileSelect.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var vm = new Vue({
+					el: '#app',
+					data: {
+						id: '',
+						linkman_one: '',
+						linktel_one: '',
+						linkman_two: '',
+						linktel_two: "",
+						prov_id: '',
+						city_id: '',
+						area_id: '',
+						address: '',
+						local: '',
+						phone: /^1(3|4|5|7|8|9)\d{9}$/,
+					},
+					methods: {
+						remove: function(e) {
+							$(e.srcElement).parent('.input-row').parent('.form-list').removeClass('active');
+						},
+						nextremove: function() {
+							$(".next").removeClass('active');
+						},
+						getCity: function(id) {
+							yh.ajax({
+								url: '/getCity',
+								type: 'get',
+								data: {
+									provid: id,
+								},
+								fn: function(data) {
+									mobileSelect.updateWheel(1, data.city);
+									vm.getCounty(data.city[0].id);
+								}
+							})
+						},
+						getCounty: function(id) {
+							yh.ajax({
+								url: '/getCounty',
+								type: 'get',
+								data: {
+									cityid: id,
+								},
+								fn: function(data) {
+									mobileSelect.updateWheel(2, data);
+								}
+							})
+						},
+						send: function() {
+							if(!this.isNull(this.linkman_one)) {
+								mui.toast('联系人不能为空');
+								$(".linkman_one").addClass("active");
+								return;
+							}
+							if(!this.isPhone(this.linktel_one)) {
+								mui.toast('请填写正确的电话号码');
+								$(".linktel_one").addClass("active");
+								return;
+							}
+							if(!this.islinkman_two(this.linkman_two)) {
+								mui.toast('联系人2最少两个字符');
+								$(".linkman_two").addClass("active");
+								return;
+							}
+							if(!this.islinktel_two(this.linktel_two)) {
+								mui.toast('联系电话2格式不正确');
+								$(".linktel_two").addClass("active");
+								return;
+							}
+							if(this.linkman_two.length >= 1 && this.linktel_two == '') {
+								mui.toast('联系电话2不能为空');
+								$(".linktel_two").addClass("active");
+								return;
+							}
+							if(this.linktel_two.length >= 1 && this.linkman_two == '') {
+								mui.toast('联系人2不能为空');
+								$(".linkman_two").addClass("active");
+								return;
+							}
+							if(!this.isNull(this.prov_id) || !this.isNull(this.city_id) || !this.isNull(this.area_id)) {
+								mui.toast('请选择所在地');
+								$(".next").addClass("active");
+								return;
+							}
+							if(!this.isNull(this.address)) {
+								mui.toast('详细地址不能为空');
+								$(".address").addClass("active");
+								return;
+							}
+							var url = vm.id == '' ? '/addUserAddress' : "/editUserAddress";
+							yh.ajax({
+								url: url,
+								data: {
+									addressid: vm.id,
+									linkman_one: vm.linkman_one,
+									linktel_one: vm.linktel_one,
+									linkman_two: vm.linkman_two,
+									linktel_two: vm.linktel_two,
+									prov_id: vm.prov_id,
+									city_id: vm.city_id,
+									area_id: vm.area_id,
+									address: vm.address,
+								},
+								type: "post",
+								fn: function(data) {
+									mui.back();
+								}
+							}, true);
+						}
+					},
+					computed: {
+						isPhone() {
+							return function(value) {
+								return this.phone.test(value) ? true : false;
+							}
+						},
+						islinktel_two() {
+							return function(value) {
+								return value == '' || this.phone.test(value) ? true : false;
+							}
+						},
+						islinkman_two() {
+							return function(value) {
+								return value == '' || value.length >= 2 ? true : false;
+							}
+						},
+						isNull() {
+							return function(value) {
+								return value == '' && value.length <= 4 ? false : true;
+							}
+						},
+					}
+				})
+				if(yh.getQueryString("id")) {
+					vm.id = yh.getQueryString("id");
+					yh.ajax({
+						url: '/userAddressInfo',
+						type: 'get',
+						data: {
+							addressid: vm.id,
+						},
+						fn: function(data) {
+							vm.linkman_one = data.linkman_one;
+							vm.linktel_one = data.linktel_one;
+							vm.linkman_two = data.linkman_two;
+							vm.linktel_two = data.linktel_two;
+							vm.prov_id = data.prov_id;
+							vm.city_id = data.city_id;
+							vm.area_id = data.area_id;
+							vm.address = data.address;
+							vm.local = data.local;
+						}
+					}, true);
+				};
+				var province_id = '',
+					city = '';
+				var mobileSelect = new MobileSelect({
+					trigger: '#trigger',
+					title: '选择城市',
+					wheels: [{
+							data: [{
+								"id": "18",
+								"name": "四川省"
+							}],
+						},
+						{
+							data: [{
+								"id": "18",
+								"name": ""
+							}],
+						},
+						{
+							data: [{
+								"id": "18",
+								"name": ""
+							}],
+						},
+					],
+					keyMap: {
+						id: 'id',
+						value: 'name',
+					},
+					callback: function(indexArr, data) {
+						vm.prov_id = data[0].id;
+						vm.city_id = data[1].id;
+						vm.area_id = data[2].id;
+					},
+					transitionEnd: function(indexArr, data) {
+						if(province_id != data[0].id) {
+							province_id = data[0].id;
+							vm.getCity(data[0].id)
+							mobileSelect.locatePosition(1, 0);
+							mobileSelect.locatePosition(2, 0);
+						} else if(city != data[1].id) {
+							city = data[1].id;
+							vm.getCounty(data[1].id);
+							mobileSelect.locatePosition(2, 0);
+						}
+
+					}
+				});
+				yh.ajax({
+					url: '/getProvince',
+					type: 'get',
+					fn: function(data) {
+						mobileSelect.updateWheel(0, data);
+						vm.getCity(data[0].id);
+					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

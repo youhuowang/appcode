@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/addcode.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+		<style type="text/css">
+			.header .title{
+				left: 1rem;
+				right: 1rem;
+			}
+			.editFriendName{
+				padding-right: 0.2rem;
+				color: #5A5A5A;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="fr editFriendName">保存</div>
+			<div class="title">备注</div>
+		</header>
+		<div id="app" class="main" v-cloak>
+			<div class="title">备注：</div>
+			<div class="input-row">
+				<input type="text" v-model="notename" :placeholder=username>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function(){
+				mui.init({
+					beforeback: function() {　　　　
+						var list = plus.webview.currentWebview().opener(); //获得父页面的webview 	　　　　
+						mui.fire(list, 'refresh'); //触发父页面的自定义事件(refresh),从而进行刷新	
+						return true; //返回true,继续页面关闭逻辑
+					}
+				});
+				var vm=new Vue({
+					el:"#app",
+					data:{
+						username:yh.getQueryString('name'),
+						notename:'',
+					},
+				});
+				mui('body').on('tap','.editFriendName', function() {
+					if(vm.notename==''){
+						mui.toast('备注不能为空');
+						return;
+					}
+					yh.ajax({
+						url: "/editFriendName",
+						data:{
+							userid:yh.getQueryString('id'),
+							notename:vm.notename
+						},
+						type: "POST",
+						fn: function(data) {
+							mui.toast('修改成功');
+							mui.back();
+						}
+					},true)
+				});
+			});
+		</script>
+	</body>
+</html>

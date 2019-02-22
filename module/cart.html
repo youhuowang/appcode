@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css">
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../css/cart.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css"/>
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<header class="header fixed">
+				<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+				<div class="fr delete icon-row iconfont icon-shanchu" @touchend="deleteCart"></div>
+				<div class="title">购物车</div>
+			</header>
+			<div class="main">
+				<div class="shop-row" v-for="(item,i) in data">
+					<div class="shop-tile">
+						<div class="label fl" @touchend="shopAll(item)">
+							<div v-bind:class="[{'checkbox-active':item.active==1},'checkbox relative fl']"></div>
+							<div class="shop-name fl">
+								<div class="icon-row fl">
+									<svg class="icon" aria-hidden="true">
+										<use xlink:href="#icon-zhengliicon-13"></use>
+									</svg>
+								</div>
+								{{item.shopname}}
+							</div>
+						</div>
+						<div class="toggle toggle-active relative fr" @touchend="item.toggle=!item.toggle">
+							{{isShow(item.toggle)}}
+						</div>
+					</div>
+					<div class="shop-box" v-show="item.toggle">
+						<div class="shop-list relative" v-for="list in item.list">
+							<div class="shop-godds">
+								<div v-bind:class="[{'checkbox-active':list.active==1},'checkbox relative fl']" @touchend="listAll(list,i)"></div>
+								<div class="godds-details">
+									<img class="fl" :src="list.goodscover" />
+									<div class="godds-details-right relative">
+										<div class="name textOver">{{list.title}}</div>
+										<div class="godds-details-right-detaile absolute">
+											<div class="fl size" @touchend="list.toggle=!list.toggle">
+												规格：{{isShow(list.toggle)}} <i class="iconfont icon-jiantouarrow486"></i>
+											</div>
+											<div class="fr price">¥ {{list.price}}</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<ul class="shop-godds-box" v-show="list.toggle">
+								<li class="shop-godds-list" v-for="spec in list.spec">
+									<div v-bind:class="[{'checkbox-active':spec.active==1},'checkbox relative fl']" @touchend="myCheckbox(spec)"></div>
+									<div class="size-detaile relative">
+										<div class="size-num fl table">
+											<div class="table-cell">
+												{{spec.color}}:{{spec.size}}码/{{spec.num}}件
+											</div>
+										</div>
+										<div class="numbox absolute translateY">
+											<div class="numbox-minus absolute" @tap="changeCarNum(spec,-1)">-</div>
+											<input type="number" v-model="spec.num" @blur='changeCarNum(spec)'/>
+											<div class="numbox-plus absolute" @tap="changeCarNum(spec,1)">+</div>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="list-total">
+						共{{item.species}}种{{item.num}}件
+						<div class="fr price relative">¥ {{item.price}}</div>
+					</div>
+				</div>
+				
+				<div class="num-all" v-if="data!=''">
+					共<span>{{num}}</span>件商品！
+				</div>
+			</div>
+			<div class="tips" v-if="istips">
+				<img src="../img/cart_tips.png"/>
+				<p>空空如也～</p>
+			</div>
+			<div class="footer fixed" v-if="data!=''">
+				<div class="fl label" @touchend="totalcheckbox">
+					<div v-bind:class="[{'checkbox-active':onOff},'checkbox relative fl']"></div>
+					全选
+				</div>
+				<div class="up fr" @click="send">结算</div>
+				<div class="total-all">
+					合计：<span>¥{{total}}</span>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../fonts/iconfont.js"></script>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<!--<script type="text/javascript" src="../js/jquery.js"></script>-->
+		<!--<script type="text/javascript" src="../js/cookie.js"></script>-->
+		<script type="text/javascript" src="../js/cart.js"></script>
+	</body>
+
+</html>

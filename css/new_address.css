@@ -1,0 +1,120 @@
+#app{
+	width: 100vw;
+	height: 100vh;
+}
+.header{
+	width: 100vw;
+	height: 0.46rem;
+	line-height: .46rem;
+	background: #FFFFFF;
+	color: #5B5B5B;
+	top: 0;
+	z-index: 10;
+	border-bottom: 1px solid #EFEFEF;
+}
+
+.header .icon-row{
+	font-size: 0.2rem;
+}
+.header .mui-action-back{
+	padding-left: 0.2rem;
+}
+.header .title{
+	height: 100%;
+	margin-left: 0.5rem;
+	margin-right: 0.5rem;
+	text-align: center;
+	font-size: 0.18rem;
+}
+.main{
+	padding-top: .46rem;
+	padding-bottom: 0.5rem;
+}
+.form{
+	margin-top: 0.2rem;
+}
+.form-list{
+	height: 0.5rem;
+	line-height: 0.5rem;
+	padding-left: 0.2rem;
+	background: #FFFFFF;
+	margin-bottom: 1px;
+	font-size: 0.16rem;
+}
+.next{
+	position: relative;
+}
+.next:before{
+	content: '';
+	width: 0.25rem;
+	height: 0.25rem;
+	position: absolute;
+	right: 0.1rem;
+	top: 50%;
+	transform: translateY(-50%);
+	-moz-transform: translateY(-50%);
+	-webkit-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	background: url(../img/icon/next.png)no-repeat;
+	background-size: 100%;
+}
+.from-nme{
+	width: 1rem;
+	height: .5rem;
+	line-height: .52rem;
+	color: #4E4D4D;
+	text-align:justify;
+    text-justify:distribute-all-lines;/*ie6-8*/
+    text-align-last:justify;/* ie9*/
+    -moz-text-align-last:justify;/*ff*/
+    -webkit-text-align-last:justify;/*chrome 20+*/
+}
+.input-row{
+	margin-left:1rem;
+	height: 100%;
+}
+.next{
+	padding-right: 0.4rem;
+}
+.input-row input{
+	width: 80%;
+	font-size: .16rem;
+}
+.send{
+	width: 100vw;
+	height: 0.48rem;
+	bottom: 0;
+	line-height: .48rem;
+	text-align: center;
+	background: #F5A623;
+	color: #FFFFFF;
+	font-size: 0.18rem;
+	font-weight: 500;
+}
+@keyframes fade {
+    from {
+        opacity: 1.0;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    to {
+        opacity: 1.0;
+    }
+}
+
+@-webkit-keyframes fade {
+    from {
+        opacity: 1.0;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    to {
+        opacity: 1.0;
+    }
+}
+.active{
+    animation: fade 600ms infinite;
+    -webkit-animation: fade 600ms infinite;
+}

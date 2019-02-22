@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../css/seller.css" />
+		<link rel="stylesheet" type="text/css" href="../css/withdraw_cash.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+	</head>
+
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">提现</div>
+		</header>
+		<div class="main" id="app" v-cloak>
+			<ul>
+				<!--<li v-bind:class="[{'link-list-active':type==2},'link-list relative']" @touchend="getNickname">
+					<div class="fl relative link-icon-row">
+						<img src="../../img/icon/wx_channel.png" />
+					</div>
+					<div class="fl">微信</div>
+				</li>-->
+				<li v-bind:class="[{'link-list-active':type==1},'link-list relative']" @tap="alipay">
+					<div class="fl relative link-icon-row">
+						<img src="../../img/icon/ali_channel.png" />
+					</div>
+					<div class="fl">支付宝</div>
+				</li>
+				<li class="link-list input-row" v-if="type==1">
+					<div class="fl">账号:</div>
+					<input type="text" v-model="account" placeholder="请输入支付宝账号"/>
+				</li>
+				<li class="link-list input-row" v-if="type==1">
+					<div class="fl">户名:</div>
+					<input type="text" v-model="name" placeholder="请输入支付宝绑定的身份证姓名" />
+				</li>
+				<li class="link-list input-row" v-if="type==2">
+					<div class="fl">微信名:</div>
+					<div class="fl">
+						{{nickname}}
+					</div>
+				</li>
+			</ul>
+			<div class="withdraw_cash">
+				<div class="available-price">
+					<div class="fl">
+						可提现金额：¥ {{availablebalance}}
+					</div>
+					<div class="fr" @tap="all">
+						全部提现
+					</div>
+				</div>
+				<div class="title">提现金额</div>
+				<div class="price">
+					<div class="fl">¥ </div>
+					<input type="number" v-model="amount" />
+				</div>
+				<div class="payprice" v-if="amount!=''">预计到账：¥ {{keepTwoDecimalFull}}（手续费费率0.8%）</div>
+			</div>
+			<div class="tag">
+				{{protocol}}
+			</div>
+			<button class="send-btn" @tap="send">
+				确认提现
+			</button>
+
+			<div class="prompt fixed" v-show="onOff" @tap="onOff=!onOff">
+				<div class="prompt-box absolute" @tap.stop=''>
+					<div class="title">提现密码</div>
+					<div class="prompt-inpu-row">
+						<input type="password" placeholder="请输入提现密码" v-model="takepassword" />
+					</div>
+					<button class="prompt-btn" @tap.stop="userWithdrawalsAct">
+						确定
+					</button>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var vm = new Vue({
+					el: '#app',
+					data: {
+						type: 1,
+						account: '',
+						nickname: '',
+						amount: '',
+						availablebalance: '',
+						takepassword: "",
+						onOff: false,
+						protocol: '',
+						name: '',
+					},
+					methods: {
+						all: function() {
+							vm.amount = vm.availablebalance;
+						},
+						alipay: function() {
+							vm.account = '';
+							vm.type = 1;
+						},
+						getNickname: function() {
+							vm.account = '';
+							plus.oauth.getServices(function(services) {
+								for(var i in services) {
+									if(services[i].id == 'weixin') {
+										var auth = services[i];
+										var waiting = plus.nativeUI.showWaiting(); // 显示系统等待对话框
+										auth.login(function() {
+											waiting.close();
+											//											plus.nativeUI.toast("登录认证成功");
+											auth.getUserInfo(function() {
+												vm.account = auth.userInfo.openid;
+												vm.nickname = auth.userInfo.nickname;
+												//												console.log(vm.nickname);
+												var str = JSON.stringify(auth.userInfo);
+												console.log(str);
+												vm.type = 2;
+											}, function(e) {
+												plus.nativeUI.toast("获取用户信息失败：" + e.message);
+											});
+										}, function(e) {
+											waiting.close();
+											plus.nativeUI.toast("获取微信信息失败：" + e.message);
+										});
+										// {scope:'snsapi_userinfo',appid:'wx68bbe6ef46417e2f'}
+									}
+
+								}
+							})
+						},
+						send: function() {
+							if(vm.account == '') {
+								plus.nativeUI.toast('请输入提现账号');
+								return;
+							}
+							if(vm.name == '') {
+								plus.nativeUI.toast('请输入户名');
+								return;
+							}
+							if(vm.availablebalance - vm.amount < 0) {
+								mui.alert('提现金额不能大于可提现金额', '警告', '确定', '', 'div');
+								return;
+							}
+							if(vm.amount == '' || vm.amount == 0 || !/^(([0-9]|([1-9][0-9]{0,9}))((\.[0-9]{1,2})?))$/.test(vm.amount)) {
+								plus.nativeUI.toast('请输入正确的提现金额');
+								return;
+							}
+							if(this.keepTwoDecimalFull<1){
+								plus.nativeUI.toast('预计到账金额大于1元时才能提现哦！');
+								return;
+							}
+							mui.confirm('你的提现账号为：' + vm.account, '提示', ['取消', '确认'], function(e) {
+								if(e.index == 1) { //确认
+									vm.onOff = true;
+								}
+							})
+						},
+						userWithdrawalsAct: function() {
+							if(vm.takepassword == '' || vm.takepassword.length < 6) {
+								mui.toast("提现密码不正确");
+								return;
+							}
+							var waiting = plus.nativeUI.showWaiting(); // 显示系统等待对话框
+							yh.ajax({
+								url: "/userWithdrawalsAct",
+								data: {
+									type: vm.type,
+									account: vm.account,
+									amount: vm.amount,
+									name: vm.name,
+									takepassword: vm.takepassword,
+								},
+								type: "POST",
+								fn: function(data) {
+									waiting.close();
+									vm.onOff = false;
+									mui.alert('提现成功,请关注提现账号到账情况', '优货网', '确定', function() {
+										var view = plus.webview.getWebviewById('balance.html'); //
+										mui.fire(view, 'refresh');
+										mui.back();
+									});
+								}
+							}, true, function(reg) {
+								vm.takepassword = '';
+								waiting.close();
+								vm.onOff = false;
+								if(reg) {
+									mui.toast(reg.message);
+								}
+							})
+						},
+					},
+					computed: {
+						isprice: function() {
+							return /^(([0-9]|([1-9][0-9]{0,9}))((\.[0-9]{1,2})?))$/.test(vm.amount) ? true : false;
+						},
+						keepTwoDecimalFull: function() { 
+							var num=this.amount-this.amount*0.008;
+							var result = parseFloat(num); 
+							result = Math.round(num * 100) / 100; 
+							var s_x = result.toString(); 
+							var pos_decimal = s_x.indexOf('.'); 
+							if(pos_decimal < 0) { 
+								pos_decimal = s_x.length; 
+								s_x += '.'; 
+							} 
+							while(s_x.length <= pos_decimal + 2) { 
+								s_x += '0'; 
+							} 
+							return s_x;
+						}
+					}
+				})
+				yh.ajax({
+					url: '/userWithdrawalsPage',
+					type: "get",
+					fn: function(reg) {
+						vm.protocol = reg.protocol;
+						vm.availablebalance = reg.availablebalance;
+					}
+				}, true);
+			})
+		</script>
+	</body>
+
+</html>

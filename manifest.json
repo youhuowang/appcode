@@ -1,0 +1,740 @@
+{
+    "@platforms" : [ "android", "iPhone", "iPad" ],
+    "id" : "H5C2F066E", /*应用的标识，创建应用时自动生成，勿手动修改*/
+    "name" : "优货网", /*应用名称，程序桌面图标名称*/
+    "version" : {
+        "name" : "2.3.3", /*应用版本名称*/
+        "code" : 85
+    },
+    "description" : "", /*应用描述信息*/
+    "icons" : {
+        "72" : "icon.png"
+    },
+    "launch_path" : "index.html", /*应用的入口页面，默认为根目录下的index.html；支持网络地址，必须以http://或https://开头*/
+    "developer" : {
+        "name" : "", /*开发者名称*/
+        "email" : "18684000453@163.com", /*开发者邮箱地址*/
+        "url" : ""
+    },
+    "permissions" : {
+        "Cache" : {
+            "description" : "管理应用缓存"
+        },
+        "Console" : {
+            "description" : "跟踪调试输出日志"
+        },
+        "Contacts" : {
+            "description" : "访问系统联系人信息"
+        },
+        "Events" : {
+            "description" : "应用扩展事件"
+        },
+        "Messaging" : {
+            "description" : "访问通讯能力"
+        },
+        "Payment" : {},
+        "Push" : {},
+        "OAuth" : {},
+        "Maps" : {}
+    },
+    "plus" : {
+        "splashscreen" : {
+            "autoclose" : true, /*是否自动关闭程序启动界面，true表示应用加载应用入口页面后自动关闭；false则需调plus.navigator.closeSplashscreen()关闭*/
+            "waiting" : true,
+            "background" : "#ffffff",
+            "delay" : 2000
+        },
+        "runmode" : "normal", /*应用的首次启动运行模式，可取liberate或normal，liberate模式在第一次启动时将解压应用资源（Android平台File API才可正常访问_www目录）*/
+        "signature" : "Sk9JTiBVUyBtYWlsdG86aHIyMDEzQGRjbG91ZC5pbw==", /*可选，保留给应用签名，暂不使用*/
+        "distribute" : {
+            "plugins" : {
+                "payment" : {
+                    "alipay" : {
+                        "description" : "阿里支付",
+                        "scheme" : ""
+                    },
+                    "appleiap" : {
+                        "description" : "Apple应用内支付"
+                    },
+                    "weixin" : {
+                        "description" : "微信支付",
+                        "appid" : "wx68bbe6ef46417e2f"
+                    }
+                },
+                "speech" : {},
+                "push" : {
+                    "igexin" : {
+                        "appid" : "rS75xUTbKm8UAkKOQtyNf8",
+                        "appkey" : "0KM1zMKWtl5sfztz99Qon5",
+                        "appsecret" : "R6T5TZhVmR6PXt5OVtQyc7"
+                    }
+                },
+                "oauth" : {
+                    "weixin" : {
+                        "appid" : "wx68bbe6ef46417e2f",
+                        "appsecret" : "b40f5ddbc5633c5f5bf965f1b6222269"
+                    }
+                },
+                "share" : {},
+                "maps" : {
+                    "amap" : {
+                        "appkey_ios" : "df6f1b314f7ceadc2e2032fe874c1fba",
+                        "appkey_android" : "eb1ff6833db75edee55c24e6451333cb"
+                    }
+                }
+            },
+            "apple" : {
+                "appid" : "", /*iOS应用标识，苹果开发网站申请的appid，如io.dcloud.HelloH5*/
+                "mobileprovision" : "", /*iOS应用打包配置文件*/
+                "password" : "", /*iOS应用打包个人证书导入密码*/
+                "p12" : "", /*iOS应用打包个人证书，打包配置文件关联的个人证书*/
+                "devices" : "universal", /*iOS应用支持的设备类型，可取值iphone/ipad/universal*/
+                "frameworks" : [],
+                "privacyDescription" : {
+                    "NSPhotoLibraryUsageDescription" : "“优货网”将在修改头像、上传商品或店铺照片时访问您的相册权限，是否允许打开相册？",
+                    "NSPhotoLibraryAddUsageDescription" : "“优货网”将在修改头像、上传商品或店铺照片时访问您的相册权限，是否允许打开相册？",
+                    "NSCameraUsageDescription" : "“优货网”将在修改头像、上传商品或店铺照片时访问您的相机权限，是否允许打开相机？",
+                    "NSMicrophoneUsageDescription" : "“优货网”将在语音聊天时访问您的麦克风，是否允许打开麦克风？",
+                    "NSContactsUsageDescription" : "“优货网”将在好友申请中访问您的通讯录，是否允许访问通讯录？",
+                    "NSLocationAlwaysAndWhenInUseUsageDescription" : "以便获取附近商家信息",
+                    "NSLocationAlwaysUsageDescription" : "以便获取附近商家信息",
+                    "NSLocationWhenInUseUsageDescription" : "以便获取附近商家信息"
+                }
+            },
+            "google" : {
+                "packagename" : "", /*Android应用包名，如io.dcloud.HelloH5*/
+                "keystore" : "", /*Android应用打包使用的密钥库文件*/
+                "password" : "", /*Android应用打包使用密钥库中证书的密码*/
+                "aliasname" : "", /*Android应用打包使用密钥库中证书的别名*/
+                "schemes" : [ "test" ],
+                "permissions" : [
+                    "<uses-permission android:name=\"android.permission.RECORD_AUDIO\"/>",
+                    "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
+                    "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_CONTACTS\"/>",
+                    "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
+                    "<uses-permission android:name=\"android.permission.INTERNET\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
+                    "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
+                    "<uses-permission android:name=\"android.permission.CALL_PHONE\"/>",
+                    "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>",
+                    "<uses-feature android:name=\"android.hardware.camera.autofocus\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_CONTACTS\"/>",
+                    "<uses-permission android:name=\"android.permission.SYSTEM_ALERT_WINDOW\"/>",
+                    "<uses-feature android:name=\"android.hardware.camera\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>",
+                    "<uses-permission android:name=\"android.permission.RECEIVE_BOOT_COMPLETED\"/>",
+                    "<uses-permission android:name=\"android.permission.CAMERA\"/>"
+                ]
+            },
+            "orientation" : [ "portrait-primary", "portrait-secondary" ], /*应用支持的方向，portrait-primary：竖屏正方向；portrait-secondary：竖屏反方向；landscape-primary：横屏正方向；landscape-secondary：横屏反方向*/
+            "icons" : {
+                "ios" : {
+                    "prerendered" : true, /*应用图标是否已经高亮处理，在iOS6及以下设备上有效*/
+                    "auto" : "", /*应用图标，分辨率：512x512，用于自动生成各种尺寸程序图标*/
+                    "iphone" : {
+                        "normal" : "", /*iPhone普通屏幕程序图标，分辨率：57x57*/
+                        "retina" : "", /*iPhone高分屏程序图标，分辨率：114x114*/
+                        "retina7" : "", /*iPhone iOS7高分屏程序图标，分辨率：120x120*/
+                        "spotlight-normal" : "", /*iPhone Spotlight搜索程序图标，分辨率：29x29*/
+                        "spotlight-retina" : "", /*iPhone高分屏Spotlight搜索程序图标，分辨率：58x58*/
+                        "spotlight-retina7" : "", /*iPhone iOS7高分屏Spotlight搜索程序图标，分辨率：80x80*/
+                        "settings-normal" : "", /*iPhone设置页面程序图标，分辨率：29x29*/
+                        "settings-retina" : "",
+                        "app@2x" : "unpackage/res/icons/120x120.png",
+                        "app@3x" : "unpackage/res/icons/180x180.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png",
+                        "notification@3x" : "unpackage/res/icons/60x60.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "settings@3x" : "unpackage/res/icons/87x87.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png",
+                        "spotlight@3x" : "unpackage/res/icons/120x120.png"
+                    },
+                    "ipad" : {
+                        "normal" : "", /*iPad普通屏幕程序图标，分辨率：72x72*/
+                        "retina" : "", /*iPad高分屏程序图标，分辨率：144x144*/
+                        "normal7" : "", /*iPad iOS7程序图标，分辨率：76x76*/
+                        "retina7" : "", /*iPad iOS7高分屏程序图标，分辨率：152x152*/
+                        "spotlight-normal" : "", /*iPad Spotlight搜索程序图标，分辨率：50x50*/
+                        "spotlight-retina" : "", /*iPad高分屏Spotlight搜索程序图标，分辨率：100x100*/
+                        "spotlight-normal7" : "", /*iPad iOS7 Spotlight搜索程序图标，分辨率：40x40*/
+                        "spotlight-retina7" : "", /*iPad iOS7高分屏Spotlight搜索程序图标，分辨率：80x80*/
+                        "settings-normal" : "", /*iPad设置页面程序图标，分辨率：29x29*/
+                        "settings-retina" : "",
+                        "app" : "unpackage/res/icons/76x76.png",
+                        "app@2x" : "unpackage/res/icons/152x152.png",
+                        "notification" : "unpackage/res/icons/20x20.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png",
+                        "proapp@2x" : "unpackage/res/icons/167x167.png",
+                        "settings" : "unpackage/res/icons/29x29.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "spotlight" : "unpackage/res/icons/40x40.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png"
+                    },
+                    "appstore" : "C:/Users/Administrator.USER-20181109TF/Desktop/QQ图片20190114143000.png"
+                },
+                "android" : {
+                    "mdpi" : "unpackage/res/icons/48x48.png", /*普通屏程序图标，分辨率：48x48*/
+                    "ldpi" : "unpackage/res/icons/48x48.png", /*大屏程序图标，分辨率：48x48*/
+                    "hdpi" : "unpackage/res/icons/72x72.png", /*高分屏程序图标，分辨率：72x72*/
+                    "xhdpi" : "unpackage/res/icons/96x96.png", /*720P高分屏程序图标，分辨率：96x96*/
+                    "xxhdpi" : "unpackage/res/icons/144x144.png",
+                    "xxxhdpi" : "unpackage/res/icons/192x192.png"
+                }
+            },
+            "splashscreen" : {
+                "ios" : {
+                    "iphone" : {
+                        "default" : "", /*iPhone3启动图片选，分辨率：320x480*/
+                        "retina35" : "", /*3.5英寸设备(iPhone4)启动图片，分辨率：640x960*/
+                        "retina40" : "C:/Users/Administrator.USER-20181109TF/Desktop/不同格式引导页/不同格式引导页/640_1136（SE）.png",
+                        "retina47" : "C:/Users/Administrator.USER-20181109TF/Desktop/不同格式引导页/不同格式引导页/750_1334（6／7_8）.png",
+                        "retina55" : "C:/Users/Administrator.USER-20181109TF/Desktop/不同格式引导页/不同格式引导页/828_1472（plus）.png",
+                        "iphonex" : "C:/Users/Administrator.USER-20181109TF/Desktop/不同格式引导页/不同格式引导页/750_1624（X／xs）.png",
+                        "portrait-896h@2x" : "C:/Users/Administrator.USER-20181109TF/Desktop/不同格式引导页/不同格式引导页/828_1792（XR）@2x.png",
+                        "protrait-896h@3x" : "C:/Users/Administrator.USER-20181109TF/Desktop/不同格式引导页/不同格式引导页/750_1624（X／xs）.png"
+                    },
+                    "ipad" : {
+                        "portrait" : "", /*iPad竖屏启动图片，分辨率：768x1004*/
+                        "portrait-retina" : "", /*iPad高分屏竖屏图片，分辨率：1536x2008*/
+                        "landscape" : "", /*iPad横屏启动图片，分辨率：1024x748*/
+                        "landscape-retina" : "", /*iPad高分屏横屏启动图片，分辨率：2048x1496*/
+                        "portrait7" : "", /*iPad iOS7竖屏启动图片，分辨率：768x1024*/
+                        "portrait-retina7" : "", /*iPad iOS7高分屏竖屏图片，分辨率：1536x2048*/
+                        "landscape7" : "", /*iPad iOS7横屏启动图片，分辨率：1024x768*/
+                        "landscape-retina7" : ""
+                    }
+                },
+                "android" : {
+                    "mdpi" : "", /*普通屏启动图片，分辨率：240x282*/
+                    "ldpi" : "", /*大屏启动图片，分辨率：320x442*/
+                    "hdpi" : "C:/Users/Administrator.USER-20181109TF/Desktop/不同格式引导页/不同格式引导页/750_1334（6／7_8）.png", /*高分屏启动图片，分辨率：480x762*/
+                    "xhdpi" : "C:/Users/Administrator.USER-20181109TF/Desktop/不同格式引导页/不同格式引导页/750_1334（6／7_8）.png", /*720P高分屏启动图片，分辨率：720x1242*/
+                    "xxhdpi" : "C:/Users/Administrator.USER-20181109TF/Desktop/不同格式引导页/不同格式引导页/750_1334（6／7_8）.png"
+                }
+            }
+        },
+        "adid" : "121768190007"
+    },
+    "dependencies" : {
+        "pages" : {
+            "module/personal.html" : {
+                "href" : "module/personal.html",
+                "resources" : [
+                    "css/app.css",
+                    "css/user.css",
+                    "img/EDD872A56C1C993B86C21B70B092693A.png",
+                    "fonts/iconfont.js",
+                    "js/web.js",
+                    "js/mui.js",
+                    "js/aes.js",
+                    "js/jquery.js",
+                    "img/5A94C7A4-59F0-412D-BF15-DA88DF6A7E46.png"
+                ],
+                "priority" : 0,
+                "refer" : [
+                    "module/cart.html",
+                    "module/orderDetails.html",
+                    "module/address.html",
+                    "module/paySuccessCB.html",
+                    "module/order_query.html",
+                    "module/tab_top.html",
+                    "module/login.html",
+                    "index.html",
+                    "checkin/html/checkin.html",
+                    "checkin/html/seller.html",
+                    "module/collection.html",
+                    "module/user.html",
+                    "module/shopFansList.html",
+                    "setup/html/index.html",
+                    "module/test.html",
+                    "chat/html/message.html"
+                ]
+            },
+            "module/information.html" : {
+                "href" : "module/information.html",
+                "resources" : [
+                    "css/app.css",
+                    "css/mui.css",
+                    "css/information.css",
+                    "fonts/iconfont.css",
+                    "fonts/iconfont.eot",
+                    "fonts/iconfont.ttf",
+                    "fonts/iconfont.svg",
+                    "js/web.js",
+                    "img/system.png",
+                    "img/notice.png",
+                    "img/11F3A3D0-898E-48F1-9284-98F4C5325810.png",
+                    "img/5A94C7A4-59F0-412D-BF15-DA88DF6A7E46.png"
+                ],
+                "priority" : 1,
+                "refer" : [ "chat/html/friends.html", "chat/html/message.html" ]
+            },
+            "module/Location.html" : {
+                "href" : "module/Location.html",
+                "resources" : [
+                    "fonts/iconfont.css",
+                    "fonts/iconfont.eot",
+                    "fonts/iconfont.ttf",
+                    "fonts/iconfont.svg",
+                    "css/app.css"
+                ],
+                "priority" : 2,
+                "refer" : [ "module/newlocation.html" ]
+            },
+            "module/searchList.html" : {
+                "href" : "module/searchList.html",
+                "resources" : [
+                    "css/app.css",
+                    "fonts/iconfont.css",
+                    "fonts/iconfont.eot",
+                    "fonts/iconfont.ttf",
+                    "fonts/iconfont.svg",
+                    "css/searchList.css",
+                    "img/weigouxuan.png",
+                    "img/gouxuan.png",
+                    "js/web.js",
+                    "js/Vue.js",
+                    "img/11F3A3D0-898E-48F1-9284-98F4C5325810.png",
+                    "img/C3DA262A-8A47-437B-A1D8-4FF0D161A4F1.png"
+                ],
+                "priority" : 3,
+                "refer" : [
+                    "module/search.html",
+                    "module/details.html",
+                    "module/shopindex.html",
+                    "module/login.html"
+                ]
+            },
+            "module/search.html" : {
+                "href" : "module/search.html",
+                "resources" : [
+                    "fonts/iconfont.css",
+                    "fonts/iconfont.eot",
+                    "fonts/iconfont.ttf",
+                    "fonts/iconfont.svg",
+                    "css/app.css",
+                    "css/cearch.css",
+                    "js/web.js",
+                    "js/mui.js"
+                ],
+                "refer" : [ "module/searchList.html" ],
+                "priority" : 3
+            },
+            "main.html" : {
+                "href" : "main.html",
+                "resources" : [
+                    "css/app.css",
+                    "fonts/iconfont.css",
+                    "fonts/iconfont.eot",
+                    "fonts/iconfont.ttf",
+                    "fonts/iconfont.svg",
+                    "css/main.css",
+                    "img/BA53294D96997C56E21684E9C36F114E.png",
+                    "img/FDACC719042AE4BDD532CEA390D835F2.png",
+                    "img/B36FBD66E1AEF532AED8FA2B68E206BC.png",
+                    "css/swiper.css",
+                    "css/mui.css",
+                    "js/web.js",
+                    "js/swiper.min.js",
+                    "img/icon/nav.png",
+                    "img/icon/nav4@2x.png",
+                    "img/icon/nav313@2x.png",
+                    "img/icon/nav2@2x.png",
+                    "img/icon/nav39@2x.png",
+                    "img/icon/nav310@2x.png",
+                    "img/icon/nav311@2x.png",
+                    "img/icon/nav312@2x.png",
+                    "img/C3DA262A-8A47-437B-A1D8-4FF0D161A4F1.png",
+                    "img/5A94C7A4-59F0-412D-BF15-DA88DF6A7E46.png",
+                    "js/Vue.js"
+                ],
+                "refer" : [
+                    "module/Location.html",
+                    "module/search.html",
+                    "module/new_file.html",
+                    "module/newPattern.html",
+                    "module/shopindex.html",
+                    "module/optimization.html",
+                    "module/trend.html",
+                    "module/cart.html",
+                    "module/recent_visit.html",
+                    "checkin/html/checkin.html",
+                    "checkin/html/business.html",
+                    "module/login.html",
+                    "checkin/html/tail_goos_list.html",
+                    "checkin/html/customShopList.html.html",
+                    "checkin/html/checkinstart.html",
+                    "setup/html/helpCenter.html"
+                ],
+                "priority" : 2
+            },
+            "module/follow.html" : {
+                "href" : "module/follow.html",
+                "resources" : [
+                    "css/app.css",
+                    "js/web.js",
+                    "fonts/iconfont.css",
+                    "fonts/iconfont.eot",
+                    "fonts/iconfont.ttf",
+                    "fonts/iconfont.svg",
+                    "css/mui.css",
+                    "css/follow.css",
+                    "js/mui.min.js",
+                    "js/Vue.js",
+                    "js/follow.js",
+                    "img/5A94C7A4-59F0-412D-BF15-DA88DF6A7E46.png",
+                    "img/C3DA262A-8A47-437B-A1D8-4FF0D161A4F1.png",
+                    "css/swiper.css",
+                    "js/swiper.min.js",
+                    "js/mui.js"
+                ],
+                "priority" : 3,
+                "refer" : [ "module/login.html", "index.html" ]
+            },
+            "index.html" : {
+                "href" : "index.html",
+                "resources" : [
+                    "js/mui.min.js",
+                    "css/index.css",
+                    "fonts/iconfont.css",
+                    "fonts/iconfont.eot",
+                    "fonts/iconfont.ttf",
+                    "fonts/iconfont.svg",
+                    "css/app.css",
+                    "main.html",
+                    "module/personal.html"
+                ],
+                "refer" : [ "module/information.html", "module/follow.html", "module/login.html" ],
+                "priority" : 0
+            },
+            "module/newlocation.html" : {
+                "resources" : [ "css/newlocation.css" ],
+                "refer" : [ "module/Location.html", "index.html" ],
+                "priority" : 0
+            },
+            "module/cart.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/login.html",
+                    "module/details.html",
+                    "module/order_details.html"
+                ],
+                "priority" : 0
+            },
+            "module/new_file.html" : {
+                "resources" : [],
+                "refer" : [ "module/details.html", "module/login.html" ],
+                "priority" : 0
+            },
+            "module/details.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/cart.html",
+                    "module/new_file.html",
+                    "module/details.html",
+                    "module/login.html",
+                    "module/newPattern.html",
+                    "module/trend.html",
+                    "module/optimization.html",
+                    "module/shopindex.html",
+                    "module/searchList.html",
+                    "module/order_details.html",
+                    "module/orderDetails.html"
+                ],
+                "priority" : 0
+            },
+            "module/newPattern.html" : {
+                "resources" : [],
+                "refer" : [ "module/details.html", "module/login.html" ],
+                "priority" : 0
+            },
+            "module/trend.html" : {
+                "resources" : [],
+                "refer" : [ "module/details.html" ],
+                "priority" : 0
+            },
+            "module/optimization.html" : {
+                "resources" : [],
+                "refer" : [ "module/details.html" ],
+                "priority" : 0
+            },
+            "module/shopindex.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/details.html",
+                    "module/searchList.html",
+                    "module/recent_visit.html",
+                    "module/orderDetails.html",
+                    "module/login.html"
+                ],
+                "priority" : 0
+            },
+            "module/order_details.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/beecloud.html",
+                    "module/details.html",
+                    "module/login.html",
+                    "module/cart.html",
+                    "module/new_address.html",
+                    "module/address.html"
+                ],
+                "priority" : 0
+            },
+            "module/beecloud.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/order_details.html",
+                    "module/under_pay.html",
+                    "module/paySuccessCB.html"
+                ],
+                "priority" : 0
+            },
+            "module/under_pay.html" : {
+                "resources" : [],
+                "refer" : [ "module/beecloud.html", "module/paySuccessCB.html" ],
+                "priority" : 0
+            },
+            "module/paySuccessCB.html" : {
+                "resources" : [],
+                "refer" : [ "module/orderDetails.html", "index.html" ],
+                "priority" : 0
+            },
+            "module/orderDetails.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/paySuccessCB.html",
+                    "module/details.html",
+                    "module/shopindex.html"
+                ],
+                "priority" : 0
+            },
+            "module/recent_visit.html" : {
+                "resources" : [],
+                "refer" : [ "module/shopindex.html", "module/login.html" ],
+                "priority" : 0
+            },
+            "module/login.html" : {
+                "resources" : [
+                    "fonts/iconfont.css",
+                    "css/app.css",
+                    "css/register.css",
+                    "css/mui.css"
+                ],
+                "refer" : [ "module/register.html" ],
+                "priority" : 0
+            },
+            "module/tab_top.html" : {
+                "resources" : [ "module/order_query.html" ],
+                "refer" : [],
+                "priority" : 0
+            },
+            "module/order_query.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/details.html",
+                    "main.html",
+                    "module/shopindex.html",
+                    "module/orderDetails.html",
+                    "module/beecloud.html",
+                    "module/unders_pay.html",
+                    "module/under_pay_details.html",
+                    "module/login.html"
+                ],
+                "priority" : 0
+            },
+            "module/address.html" : {
+                "resources" : [],
+                "refer" : [ "module/new_address.html", "module/order_details.html" ],
+                "priority" : 0
+            },
+            "module/new_address.html" : {
+                "resources" : [],
+                "refer" : [ "module/address.html", "module/order_details.html" ],
+                "priority" : 0
+            },
+            "module/unders_pay.html" : {
+                "resources" : [],
+                "refer" : [ "module/under_pay_details.html", "module/paySuccessCB.html" ],
+                "priority" : 0
+            },
+            "checkin/html/business.html" : {
+                "resources" : [],
+                "refer" : [
+                    "checkin/html/checkinstart.html",
+                    "checkin/html/Administration.html",
+                    "checkin/html/seller.html"
+                ],
+                "priority" : 0
+            },
+            "checkin/html/checkinstart.html" : {
+                "resources" : [],
+                "refer" : [ "checkin/html/business.html" ],
+                "priority" : 0
+            },
+            "checkin/html/seller.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/tab_top.html",
+                    "checkin/html/balance.html",
+                    "checkin/html/checkin.html",
+                    "checkin/html/settlement.html",
+                    "checkin/html/Administration.html",
+                    "checkin/html/notice.html",
+                    "checkin/html/tailGoods.html"
+                ],
+                "priority" : 0
+            },
+            "checkin/html/balance.html" : {
+                "resources" : [],
+                "refer" : [
+                    "checkin/html/withdraw_cash.html",
+                    "checkin/html/checkin.html",
+                    "checkin/html/password.html",
+                    "checkin/html/detailed.html",
+                    "checkin/html/newpassword.html"
+                ],
+                "priority" : 0
+            },
+            "checkin/html/withdraw_cash.html" : {
+                "resources" : [],
+                "refer" : [ "checkin/html/balance.html" ],
+                "priority" : 0
+            },
+            "checkin/html/checkin.html" : {
+                "resources" : [],
+                "refer" : [ "checkin/html/balance.html" ],
+                "priority" : 0
+            },
+            "checkin/html/password.html" : {
+                "resources" : [],
+                "refer" : [
+                    "checkin/html/newpassword.html",
+                    "checkin/html/balance.html",
+                    "checkin/html/modify_password.html",
+                    "checkin/html/reset_password.html"
+                ],
+                "priority" : 0
+            },
+            "checkin/html/detailed.html" : {
+                "resources" : [],
+                "refer" : [ "checkin/html/balance.html" ],
+                "priority" : 0
+            },
+            "checkin/html/Administration.html" : {
+                "resources" : [],
+                "refer" : [ "checkin/html/new_goods.html", "checkin/html/delGoodsList.html" ],
+                "priority" : 0
+            },
+            "checkin/html/new_goods.html" : {
+                "resources" : [],
+                "refer" : [ "checkin/html/Administration.html" ],
+                "priority" : 0
+            },
+            "checkin/html/notice.html" : {
+                "resources" : [],
+                "refer" : [ "checkin/html/add_notice.html" ],
+                "priority" : 0
+            },
+            "checkin/html/tailGoods.html" : {
+                "resources" : [],
+                "refer" : [ "checkin/html/new_goods.html" ],
+                "priority" : 0
+            },
+            "module/register.html" : {
+                "resources" : [],
+                "refer" : [ "module/login.html" ],
+                "priority" : 0
+            },
+            "checkin/html/tail_goos_list.html" : {
+                "resources" : [],
+                "refer" : [ "module/details.html" ],
+                "priority" : 0
+            },
+            "checkin/html/customShopList.html.html" : {
+                "resources" : [],
+                "refer" : [ "module/shopindex.html" ],
+                "priority" : 0
+            },
+            "module/collection.html" : {
+                "resources" : [],
+                "refer" : [ "module/details.html" ],
+                "priority" : 0
+            },
+            "module/user.html" : {
+                "resources" : [],
+                "refer" : [ "checkin/html/modify_password.html" ],
+                "priority" : 0
+            },
+            "setup/html/index.html" : {
+                "resources" : [],
+                "refer" : [
+                    "setup/html/userFeedback.html",
+                    "setup/html/about.html",
+                    "setup/html/helpCenter.html"
+                ],
+                "priority" : 0
+            },
+            "setup/html/helpCenter.html" : {
+                "resources" : [],
+                "refer" : [ "setup/html/articleInfo.html" ],
+                "priority" : 0
+            },
+            "chat/html/friends.html" : {
+                "resources" : [],
+                "refer" : [
+                    "module/information.html",
+                    "chat/html/addGood_friend.html",
+                    "chat/html/userdetails.html",
+                    "chat/html/friend_application.html"
+                ],
+                "priority" : 0
+            },
+            "chat/html/userdetails.html" : {
+                "resources" : [],
+                "refer" : [
+                    "chat/html/remarks.html",
+                    "chat/html/message.html",
+                    "chat/html/code_friend_application.html",
+                    "chat/html/addcode.html"
+                ],
+                "priority" : 0
+            },
+            "chat/html/addGood_friend.html" : {
+                "resources" : [],
+                "refer" : [
+                    "chat/html/code_friend_application.html",
+                    "chat/html/userdetails.html",
+                    "chat/html/addcode.html"
+                ],
+                "priority" : 0
+            },
+            "chat/html/friend_application.html" : {
+                "resources" : [],
+                "refer" : [ "chat/html/userdetails.html" ],
+                "priority" : 0
+            }
+        },
+        "idle" : {
+            "resources" : [
+                "img/1C5529B8C9D127800BD7CAD63F7E84C3.png",
+                "js/aes_2.js",
+                "img/icon/nav6@2x.png",
+                "img/TB2QM7Ok79WBuNjSspeXXaz5VXa_!!708682278 Copy 2@2x.png",
+                "js/json.js",
+                "img/icon/nav315@2x.png",
+                "fonts/iconfont.woff"
+            ]
+        }
+    }
+}

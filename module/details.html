@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/swiper.css" />
+		<link rel="stylesheet" type="text/css" href="../css/details.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<header class="header fixed">
+				<div class="fl mui-action-back iconfont icon-back"></div>
+				<!--<div class="fr Complaint">投诉</div>-->
+				<div class="fr svg-row" @tap="messagelist">
+					<svg class="icon" aria-hidden="true">
+						<use xlink:href="#icon-youixn"></use>
+					</svg>
+				</div>
+				<div class="fr svg-row">
+					<a href="cart.html" sart>
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#icon-gouwuche"></use>
+						</svg>
+					</a>
+				</div>
+			</header>
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<div class="swiper-container banner" v-if="pic!=''">
+						<div class="swiper-wrapper">
+							<div class="swiper-slide" v-for="item in pic">
+								<img :src="item.path" />
+							</div>
+						</div>
+						<div class="swiper-pagination"></div>
+					</div>
+					<div class="describe relative">
+						<div class="name textOver">
+							<span>{{goodsInfo.goodsno}}# </span>{{goodsInfo.title}}
+						</div>
+						<div class="price">
+							商品卖价：<span>¥ {{goodsInfo.price}}</span>
+						</div>
+					</div>
+					<div class="details">
+						<div class="swiper-container details-slide">
+							<div class="swiper-wrapper">
+								<div class="swiper-slide" v-for="(item,index) in color" @touchend="sider(index)">
+									<span :class="[{active:item.active==1},'relative']">{{item.color}}</span>
+								</div>
+							</div>
+							<div class="swiper-button-next mui-icon mui-icon-forward"></div>
+						</div>
+						<ul class="model">
+							<li class="model-row" v-for="(item,i) in size">
+								<span class="fl">{{item.size}}</span>
+								<div class="numbox relative">
+									<div class="numbox-minus absolute" @touchend="addAndSubtract(item,-1)">-</div>
+									<input type="tel" v-model="item.num" pattern="\d*" @focus="end($event)" v-on:input="addAndSubtract(item)" @blur="isNum(item,i)" />
+									<div class="numbox-plus absolute" @touchend="addAndSubtract(item,1)">+</div>
+								</div>
+							</li>
+							<div class="total-price">
+								共<span>{{totalNum}}</span>件商品，合计<span>¥ {{totalPrice}}</span>
+							</div>
+						</ul>
+					</div>
+					<div class="shop" v-if="shopInfo">
+						<div class="shop-img fl">
+							<img :src="shopInfo.appbanner" />
+						</div>
+						<div class="shop-details">
+							<div class="fl shop-details-l">
+								<div class="list">
+									<svg class="icon" aria-hidden="true">
+										<use xlink:href="#icon-zhengliicon-13"></use>
+									</svg>
+									{{shopInfo.shopname}}
+								</div>
+								<div class="list overflow">
+									<svg class="icon" aria-hidden="true">
+										<use xlink:href="#icon-dingwei"></use>
+									</svg>
+									{{shopInfo.address}}
+								</div>
+							</div>
+							<div class="fl shop-details-r relative">
+								<div class="fans-row">
+									<div class="num">{{shopInfo.count}}</div>
+									<div class="fans">粉丝数</div>
+								</div>
+								<div class="shopinfo absolute translateY" v-if="shopInfo.follow==1" @tap="follow">
+									关注
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="recommend" v-if="recommend!=''">
+						<div class="recommend-title table">
+							<div class="table-cell">
+								<div class="title">本／店／推／荐</div>
+								<p>Recommend</p>
+							</div>
+						</div>
+						<ul class="shop-content">
+							<li class="list-row relative" v-for="(list,index) in recommend" @tap="godetails(list.id)">
+								<img :src="list.goodscover" />
+								<div class="name textOver">{{list.title}}</div>
+								<div class="price absolute">¥ {{list.price}}</div>
+								<div class="collection absolute" @tap.stop="toggleGoods(index,list.id,list.collect)">
+									<svg class="icon" aria-hidden="true" v-if="list.collect==1">
+										<use xlink:href="#icon-zhengliicon-11"></use>
+									</svg>
+									<svg class="icon" aria-hidden="true" v-else="list.collect==2">
+										<use xlink:href="#icon-shoucang-copy"></use>
+									</svg>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="footer fixed">
+				<div class="fl footer-left">
+					<div class="fl table">
+						<div class="table-cell" @tap='sendmessage(shopInfo.user_id)'>
+							<div class="iconfont">
+								<svg class="icon" aria-hidden="true">
+									<use xlink:href="#icon-kefu"></use>
+								</svg>
+							</div>
+							<p>商家</p>
+						</div>
+					</div>
+					<div class="fl table">
+						<div class="table-cell" @tap="goshopInfo">
+							<div class="iconfont">
+								<svg class="icon" aria-hidden="true">
+									<use xlink:href="#icon-zhengliicon-13"></use>
+								</svg>
+							</div>
+							<p>店铺</p>
+						</div>
+					</div>
+				</div>
+				<div class="footer-btn">
+					<div class="fl push-cart" @tap="push">
+						加入购物车
+					</div>
+					<div class="fl send" @tap="send">
+						立即购买
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../fonts/iconfont.js"></script>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/swiper.min.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/details.js"></script>
+	</body>
+
+</html>

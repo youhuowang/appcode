@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../css/checkin.css" />
+		<link rel="stylesheet" type="text/css" href="../css/cropper.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/mobileSelect.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+	</head>
+
+	<body>		
+		<div id="app" v-cloak>		
+			<header class="header fixed">
+				<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+				<div class="title">{{title}}</div>
+			</header>
+			<div class="main" v-show="!onOff">
+				<div class="img-row">
+					<div class="img-recommend my-img" @tap="choiceImage(300,300,'recommend')">
+						<div v-bind:class="[{none:appbanner!=''},'table']">
+							<div class="table-cell">
+								<div class="img-row-plus">+</div>
+								<div class="img-tag">店铺招牌上传</div>
+								<div class="img-tag">（用于优货首页推荐）</div>
+							</div>
+						</div>
+						<img  v-bind:class="{none:appbanner==''}" :src="appbanner" id="recommend"/>
+					</div>
+					<div class="img-index my-img" @tap="choiceImage(326,72,'index')">
+						<div v-bind:class="[{none:shopbanner!=''},'table']">
+							<div class="table-cell">
+								<div class="img-row-plus fl">+</div>
+								<div class="img-tag fl">店铺招牌上传（用于店铺首页展示）</div>
+							</div>
+						</div>
+						<img  v-bind:class="{none:shopbanner==''}" :src="shopbanner" id="index"/>
+					</div>
+					<div class="img-shop my-img"  @tap="choiceImage(326,128,'shop')">
+						<div v-bind:class="[{none:shoppic!=''},'table']">
+							<div class="table-cell">
+								<div class="img-row-plus fl">+</div>
+								<div class="img-tag fl">店铺门面上传（用于店铺首页展示）</div>
+							</div>
+						</div>
+						<img  v-bind:class="{none:shoppic==''}" :src="shoppic"  id="shop"/>
+					</div>
+				</div>
+				<ul class="from">
+					<li class="from-list">
+						<div class="fl name">
+							<sup>*</sup>店铺名称：        
+						</div>
+						<input type="text" v-model="shopname" class="inpu-row"/>
+					</li>
+					<li class="from-list">
+						<div class="fl name">
+							<sup>*</sup>真实姓名：        
+						</div>
+						<input type="text" v-model="username" class="inpu-row"/>
+					</li>
+					<li class="from-list" id="trigger">
+						<div class="fl name">
+							<sup>*</sup>所属市区市场：
+						</div>
+						{{areas}}
+					</li>
+					<li class="from-list">
+						<div class="fl name">
+							<sup>*</sup>详细地址：
+						</div>
+						<input type="text" v-model="address" class="inpu-row"/>
+					</li>
+					<li class="from-list" @tap="opencustom=opencustom==1?2:1">
+						<div class="fl name">
+							<sup> </sup>是否支持定制
+						</div>
+						<div v-bind:class="[{'opencustom-active':opencustom==2},'fr opencustom relative']"></div>
+					</li>
+					<div v-bind:class="[{'checkbox-active':ischeckbox},'agreement relative']" @tap.stop="ischeckbox=!ischeckbox">
+						我已认真阅读并同意“<span @tap.stop="openWindow">开店协议</span>”中的所有条款
+					</div>
+				</ul>
+				<button v-bind:class="[{'send-active':!issend},'send relative']" @tap="send">
+					提交
+				</button>
+			</div>
+			<div class="img-content relative" v-show="onOff">
+				<div id="imgBox">
+					<img id="image_id"/>
+				</div>
+				<div class="footer absolute">
+					<button class="confirm fl" @tap.stop='onOff=!onOff'>取消</button>
+					<button class="confirm fr" @tap.stop="sureImage">确定</button>
+				</div>	
+			</div>
+					
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/cropper.min.js"></script>
+		<script type="text/javascript" src="../../js/mobileSelect.js"></script>
+		<script type="text/javascript" src="../js/checkin.js"></script>
+	</body>
+
+</html>

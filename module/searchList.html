@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/searchList.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<header class="header fixed">
+				<div class="fl block mui-action-back iconfont icon-back"></div>
+				<div class="search fl relative">
+					<div class="input-row absolute">
+						<div class="search-icon iconfont icon-sousuo fl"></div>
+						<div class="search-input">
+							<form onsubmit="return false">
+								<input type="search" v-model="name" @keyup.enter="search(name)" placeholder="输入商品名称关键字" />
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="send relative iconfont icon-youixn" @tap="messagelist"></div>
+				<div class="checkbox relative">
+					<div class="checkbox-row absolute translateX">
+						<div v-bind:class="[{active:onOff},'checkbox-input fl relative']" @click="onOff=!onOff">店铺</div>
+						<div v-bind:class="[{active:!onOff},'checkbox-input fl relative']" @click="onOff=!onOff">商品</div>
+					</div>
+				</div>
+			</header>
+			<div class="main">
+				<ul class="follow" v-show="onOff">
+					<li class="follow-list table" v-for="(item,index) in shops" @tap="goshopindex(item.id)">
+						<div class="table-cell">
+							<div class="img fl">
+								<img :src="item.appbanner" />
+							</div>
+							<div class="follow-list-con">
+								<div class="fl follow-list-details">
+									<div class="name">{{item.shopname}}</div>
+									<p><span class="iconfont icon-dianhua"></span>{{item.phone}}</p>
+									<p><span class="iconfont icon-dingwei"></span>{{item.address}} </p>
+								</div>
+								<div class="fr follow-list-btn">
+									<div v-bind:class="[{available:item.follow==1},'follow-button']" @tap.stop="follow(index,item.id,item.follow)">{{isFollow(item.follow)}}</div>
+									<div v-bind:class="[{available:item.friend==1},'Add-to']" @tap.stop="addFriend(item)">添加好友 </div>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+				<ul class="commodity" v-show="!onOff">
+					<li class="commodity-list relative" v-for="(item,index) in goods" @click="godetails(item.id)">
+						<img v-bind:src="item.goodscover" />
+						<div class="name textOver">{{item.title}} </div>
+						<div class="price absolute">¥ {{item.price}}</div>
+						<span v-bind:class="[{active:item.collect==2},'Collection absolute iconfont icon-shoucang']" @click.stop="toggleGoods(index,item.id,item.collect)"></span>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var vm = new Vue({
+					el: '#app',
+					data: {
+						onOff: true,
+						name: '',
+						goods: '',
+						shops: '',
+					},
+					methods: {
+						addFriend:function(item){//加好友
+							if(item.friend==2){
+								mui.toast("对方已经是你的好友了哦");
+								return;
+							}
+							yh.istoken(function(){
+								mui.openWindow('_www/chat/html/userdetails.html?id='+item.user_id,'userdetails.html', {
+									styles: {
+										popGesture: "close",
+										background: '#FFFFFF',
+									},
+								});
+							})
+						},
+						messagelist:function(){
+							yh.messagelist();
+						},
+						godetails: function(id) {
+							mui.openWindow({
+								url: 'details.html?id=' + id,
+								id: 'shopindex',
+								styles: {
+									top: 0,
+									bottom: 0,
+								},
+							})
+						},
+						goshopindex: function(id) {
+							mui.openWindow({
+								url: 'shopindex.html?id=' + id,
+								id: 'shopindex',
+								styles: {
+									top: 0,
+									bottom: 0,
+								},
+							})
+						},
+						search: function(name) {
+							if(name == '') return;
+							yh.ajax({
+								url: "/search",
+								data: {
+									'keyword': name,
+								},
+								type: "get",
+								fn: function(data) {
+									vm.goods = data.goods;
+									vm.shops = data.shops;
+								}
+							});
+						},
+						follow: function(i, id, n) { //关注切换
+							var url = n == 1 ? '/followShop' : '/delFollowShop';
+							yh.ajax({
+								url: url,
+								data: {
+									'shopid': id,
+								},
+								type: "post",
+								fn: function(data) {
+									vm.shops[i].follow = n == 1 ? 2 : 1;
+								}
+							}, true);
+						},
+						toggleGoods: function(i, id, collect) { //收藏切换
+							var url = collect == 1 ? "/collectGoods" : '/delCollectGoods';
+							yh.ajax({
+								url: url,
+								data: {
+									'goodsid': id,
+								},
+								type: "post",
+								fn: function(data) {
+									vm.goods[i].collect = collect == 1 ? 2 : 1;
+								}
+							},true);
+						}
+					},
+					computed: {
+						isFollow: function() {
+							return function(n) {
+								return n == '1' ? '+关注' : '已关注';
+							};
+						}
+					}
+				});
+				vm.name = yh.getQueryString('name');
+				vm.search(vm.name);
+			})
+		</script>
+	</body>
+
+</html>

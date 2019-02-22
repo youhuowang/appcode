@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/app.css" />
+		<link rel="stylesheet" type="text/css" href="fonts/iconfont.css">
+		<link rel="stylesheet" type="text/css" href="css/swiper.css" />
+		<link rel="stylesheet" type="text/css" href="css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<script type="text/javascript" src="js/web.js"></script>
+	</head>
+	<body>
+		<div id="app" v-cloak>
+			<div class="fixed head" v-if="address">
+				<div class="icon-row table fl service">
+					<a href="setup/html/helpCenter.html" class="table-cell" tag>
+						<div class="iconfont icon-kefu"></div>
+						<div class="label">客服</div>
+					</a>
+				</div>
+				<div class="icon-row location fr">
+					<a href="module/Location.html" tag>
+						<div class="mui-icon mui-icon-arrowdown fr"></div>
+						<div class="label overflow">{{address}}</div>
+					</a>
+				</div>
+				<div class="search relative">
+					<a href="module/search.html" tag class="absolute search-input translateY">
+						<span class="iconfont icon-sousuo fl"></span>搜索
+					</a>
+				</div>
+			</div>
+			<div class="main">
+				<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<div class="boxes">
+							<div class="swiper-container banner">
+								<div class="swiper-wrapper ">
+									<div class="swiper-slide" v-for="list in banner">
+										<a :href="list.url">
+											<img :src="list.pic" />
+										</a>
+									</div>
+								</div>
+								<div class="swiper-pagination"></div>
+							</div>
+						</div>
+						<div class="nav relative">
+							<ul>
+								<li class="fl nav-row" >
+									<a :href="shopstatus == '1'?'checkin/html/checkin.html':shopstatus == 3 ?'checkin/html/business.html': 'checkin/html/checkinstart.html'" token>
+										<img src="img/icon/nav.png" />
+										<p class="label">商家入驻</p>
+									</a>
+								</li>
+								<li class="fl nav-row">
+									<a :href="shopstatus==3?'module/shopindex.html?id='+shopid:shopstatus == '1'?'checkin/html/checkin.html':'checkin/html/checkinstart.html'" token>
+										<img src="img/icon/nav4@2x.png" />
+										<p class="label">我的店铺</p>
+									</a>
+								</li>
+								<li class="fl nav-row" class="location">
+									<a href="module/recent_visit.html" token>
+										<img src="img/icon/nav313@2x.png" />
+										<p class="label">最近访问</p>
+									</a>
+								</li>
+								<li class="fl nav-row">
+									<a href="module/cart.html" token>
+										<img src="img/icon/nav2@2x.png" />
+										<p class="label">购物车</p>
+									</a>
+								</li>
+								<li class="fl nav-row">
+									<a href="checkin/html/customShopList.html.html" tag>
+										<img src="img/icon/nav39@2x.png" />
+										<p class="label">制服定制</p>
+									</a>
+								</li>
+								<li class="fl nav-row">
+									<a href="checkin/html/tail_goos_list.html" tag>
+										<img src="img/icon/nav310@2x.png" />
+										<p class="label">尾货处理</p>
+									</a>
+								</li>
+								<li class="fl nav-row">
+									<a href="setup/html/helpCenter.html" tag>
+										<img src="img/icon/nav311@2x.png" />
+										<p class="label">帮助中心</p>
+									</a>
+								</li>
+								<li class="fl nav-row">
+									<a href="module/Location.html" tag>
+										<img src="img/icon/nav312@2x.png" />
+										<p class="label">更多市场</p>
+									</a>
+								</li>
+							</ul>
+						</div>
+						<div class="Notice relative">
+							<div class="swiper-container notice" id="notice">
+								<div class="swiper-wrapper">
+									<div class="swiper-slide" v-for="item in notice">{{item.content}}</div>
+								</div>
+							</div>
+						</div>
+						<div class="wholesale" v-if="activity!=''">
+							<div class="title relative">优货 为批发而生 Born for wholesale</div>
+							<ul class="wholesale-row">
+								<li v-for="(item,index) in activity" @click="newWebview(index,item.id)">
+									<img :src="item.pic" />
+								</li>
+							</ul>
+						</div>
+						<div class="market">
+							<div class="title relative">优货 优选店铺 Hot market</div>
+							<div class="shop" v-if="shop!=''">
+								<div class="swiper-container shop-swiper">
+									<div class="swiper-wrapper ">
+										<div class="swiper-slide" v-for="item in shop">
+											<a :href="'module/shopindex.html?id='+item.id" tag>
+												<img :src="item.appbanner" />
+												<div class="shop-name">{{item.address}}</div>
+											</a>
+										</div>
+									</div>
+									<div class="swiper-pagination"></div>
+								</div>
+							</div>
+							<div class="isshop" v-if="shoplist.length==0&&shop==''">
+								<img src="imges/20190126093702.png"/>
+								<div class="isshop-tag">
+									您当前所选城市尚未有商家入驻，请选择其他热 门城市浏览。如 成都、自贡、绵阳、德阳等。
+								</div>
+							</div>
+							<ul class="market-content fl">
+								<li class="market-item" v-for="item in shoplist">
+									<a :href="'module/shopindex.html?id='+item.id" tag>
+										<img :src="item.appbanner" />
+										<div class="name overflow shopname relative"><i class="iconfont icon-zhengliicon-13"></i> &nbsp;{{item.shopname}}</div>
+										<div class="name overflow marketname relative">{{item.marketname}}{{item.address}}</div>
+										<!--<div class="name overflow ">{{item.address}}</div>-->
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="js/swiper.min.js"></script>
+		<script type="text/javascript" src="js/mui.js"></script>
+		<script type="text/javascript" src="js/Vue.js"></script>
+		<script type="text/javascript" src="js/aes.js"></script>
+		<script type="text/javascript" src="js/app.js"></script>
+		<script type="text/javascript" src="js/mian.js"></script>
+	</body>
+
+</html>

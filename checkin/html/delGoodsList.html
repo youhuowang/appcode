@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/delGoodsList.css" />
+	</head>
+
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">已下架商品</div>
+		</header>
+		<div class="main relative" id="app" v-cloak>
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+				<ul class="mui-scroll">
+					<li class="list" v-for="(item,i) in data">
+						<div class="img fl">
+							<img :src="item.goodscover" />
+						</div>
+						<div class="details relative">
+							<div class="details-title textOver">{{item.title}} </div>
+							<div class="price absolute">
+								<p class="details-price">
+									零售价: <span>¥ {{item.retailprice}} </span>&nbsp;&nbsp;&nbsp;批发价: <span>¥ {{item.wholesaleprice}}</span>
+								</p>
+								<p class="details-price">
+									零售价: <span>¥ {{item.packingprice}}</span>
+								</p>
+							</div>
+							<div class="upperShelfGoods absolute" @touchend="upperShelfGoods(item.id,i)">
+								上架
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function(){				
+				var vm=new Vue({
+					el:"#app",
+					data:{
+						page:0,
+						data:[],
+					},
+					methods:{
+						upperShelfGoods:function(id,index){
+							yh.ajax({
+								url: '/upperShelfGoods',
+								type: "POST",
+								data: {
+									goodsid:id,
+								},
+								fn: function(data) {
+									vm.data.splice(index,1)
+									mui.toast('操作成功');	
+								}
+							}, true)
+						}
+					}
+				});
+				mui.init({
+					beforeback: function() {　　　　
+						var list = plus.webview.currentWebview().opener(); //获得父页面的webview 	　　　　
+						mui.fire(list, 'refresh'); //触发父页面的自定义事件(refresh),从而进行刷新	
+						return true; //返回true,继续页面关闭逻辑
+					},
+				  	pullRefresh : {
+					    container:"#pullrefresh",
+					    up : {
+					      height:50,//可选.默认50.触发上拉加载拖动距离
+					      auto:true,//可选,默认false.自动上拉加载一次
+					      callback :pullupRefresh //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+					    }
+					}
+				});
+				function pullupRefresh(){
+					vm.page++;
+					yh.ajax({
+						url: '/delGoodsList',
+						type: "GET",
+						data: {
+							page:vm.page,
+							num:20,
+						},
+						fn: function(data) {
+							for (var i=0;i<data.length;i++) {
+								vm.data.push(data[i]);
+							}
+							mui('#pullrefresh').pullRefresh().disablePullupToRefresh(data.length<20);					
+						}
+					}, true)
+				}
+				
+			})
+		</script>
+	</body>
+
+</html>

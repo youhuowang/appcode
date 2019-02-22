@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<style type="text/css">
+			html{
+				background: #FFFFFF;
+			}
+			.header {
+				width: 100vw;
+				height: 0.46rem;
+				line-height: .46rem;
+				color: #5B5B5B;
+				top: 0;
+				z-index: 10;
+				font-size: 0.18rem;
+			}
+			
+			.header .mui-action-back {
+				padding-left: 0.2rem;
+			}
+			
+			.header .title {
+				position: absolute;
+				height: 100%;
+				left: 0.5rem;
+				right: 0.5rem;
+				text-align: center;
+			}
+			.mian{
+				width: 100vw;
+				/*min-height:100vh;*/				
+			}
+			.tips{
+				height: 5.33rem;
+				line-height: 4.8rem;
+				color: #222222;
+				font-size: 0.16rem;
+				text-align: center;
+				background: url(../../img/business.png)no-repeat;
+				background-size:100% 100%;
+			}
+			.footer{
+				height: 0.3rem;
+				margin-top: -.15rem;
+				padding: 0 0.88rem;
+				margin-bottom: 0.5rem;
+			}
+			.footer .btn{
+				width: 0.86rem;
+				height: 0.3rem;
+				line-height: .3rem;
+				text-align: center;
+				font-size: 0.16rem;
+				color: #979797;
+				border-radius:0.08rem;
+				border:1px solid;
+			}
+			.footer .btn a{
+				color: #979797;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back">返回</div>
+			<div class="title">商家入驻</div>
+		</header>
+		<div id="app" class="mian">
+			<div class="tips">
+				您已经是商家啦，快去赚钱吧！
+			</div>
+			<div class="footer">
+				<button class="btn fl"><a href="seller.html">管理店铺</a></button>
+				<button class="btn fr"><a href="Administration.html">管理商品</a></button>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui('body').on('tap','a', function() {
+				var href = this.getAttribute('href');
+				var id = this.getAttribute("data-wid") || href;
+				if(id.indexOf("?") != -1) id = id.split("?")[0];
+				if(href && ~href.indexOf('.html')) mui.openWindow(href, id, {
+					styles: {
+						popGesture: "close"
+					},
+				});
+			});
+		</script>
+	</body>
+</html>

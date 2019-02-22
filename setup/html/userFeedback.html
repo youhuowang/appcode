@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/userFeedback.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+	</head>
+
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">意见反馈</div>
+		</header>
+		<div class="main" id="app" v-cloak>
+			<div class="phone relative" @tap="call">
+				优货客服电话：188-0173-2971
+			</div>
+			<div class="title-row relative">
+				问题描述
+			</div>
+			<div class="textarea">
+				<textarea wrap="virtual" v-model="content" placeholder="请填写您的意见或建议"></textarea>
+				<div class="addImg fl" @click="choiceImage">
+					<div class="tag" v-if="myimage==''">+</div>
+					<img :src="myimage" v-if="myimage!=''" />
+				</div>
+			</div>
+			<div class="title-row relative">
+				联系电话
+			</div>
+			<div class="input-row">
+				<input type="number" v-model="phone" placeholder="选填，方便我们可以更快的联系到您。" />
+			</div>
+			<div class="send fixed" @click="userFeedback">
+				提交意见
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var vm = new Vue({
+					el: '#app',
+					data: {
+						myimage: '',
+						token:'',
+						waiting:'',
+						pic:'',
+						phone:'',
+						content:'',
+					},
+					methods: {
+						call:function(){
+							var btnArray=['拨打','取消'];
+				            var phone="18801732971";
+				            mui.confirm('是否拨打'+phone+'?','提示',btnArray,function(e){
+				                if(e.index == 0){
+				                    plus.device.dial(phone,false);
+				                }
+				            });
+						},
+						choiceImage: function() {
+							var editButtons = new Array();
+							editButtons.push({
+								title: "拍照上传",
+								style: "default"
+							});
+							editButtons.push({
+								title: "从相册选择",
+								style: "default"
+							});
+							plus.nativeUI.actionSheet({
+								cancel: "取消",
+								buttons: editButtons
+							}, function(e) {
+								var index = e.index;
+								switch(index) {
+									case 1:
+										vm.captureImage(); //拍照
+										break;
+									case 2:
+										vm.selectImage(); //相册选择
+										break;
+								}
+							});
+						},
+						captureImage: function() { //拍照
+							var cmr = plus.camera.getCamera(2);
+							cmr.captureImage(
+								function(path) { //将图片地址转换					
+									plus.io.resolveLocalFileSystemURL(path, function(entry) {
+										var newPath = entry.toLocalURL() + "?version=" + Math.random();
+										vm.loadImage(newPath);
+									});
+								},
+								function(error) {
+									mui.toast(error.message);
+								}, {
+									filename: "_documents/"
+								}
+							);
+						},
+						selectImage: function() { //选择图片
+							plus.gallery.pick(function(path) {
+								vm.loadImage(path);
+							}, function(e) {
+								mui.toast("没有选择图片.");
+							});
+						},
+						loadImage: function(path) { //确定选择图片
+							vm.waiting = plus.nativeUI.showWaiting();
+							vm.myimage = 'http://iph.href.lu/100x100?text=上传中';
+							var img = new Image();
+							img.src = path;
+							img.onload = function() {
+								vm.putb(vm.getBase64Image(img),path)
+							};
+						},
+						getBase64Image: function(img) {
+							var canvas = document.createElement("canvas"); //创建canvas DOM元素，并设置其宽高和图片一样
+							canvas.width = img.width;
+							canvas.height = img.height;
+							var ctx = canvas.getContext("2d");
+							ctx.drawImage(img, 0, 0, img.width, img.height); //使用画布画图
+							var dataURL = canvas.toDataURL("image/" + 'jpeg'); //返回的是一串Base64编码的URL并指定格式
+							canvas = null; //释放
+							return dataURL.substring(23); //把头部的data:image/jpeg;base64,去掉。
+						},
+						getQiniuUpTokenAndUrl: function() {
+							yh.ajax({
+								url: "/getQiniuUpTokenAndUrl",
+								type: "GET",
+								fn: function(data) {
+									vm.token = data.token;
+								}
+							}, true)
+						},
+						putb: function(pic,path) {
+							function fileSize(str) { /*通过base64编码字符流计算文件流大小函数*/
+								var fileSize;
+								if(str.indexOf('=') > 0) {
+									var indexOf = str.indexOf('=');
+									str = str.substring(0, indexOf); //把末尾的’=‘号去掉
+								}
+								fileSize = parseInt(str.length - (str.length / 8) * 2);
+								return fileSize;
+							}
+							var list = list;
+							var url = "http://upload.qiniup.com/putb64/" + fileSize(pic);
+							var xhr = new XMLHttpRequest();
+							xhr.onreadystatechange = function(list) {
+								if(xhr.readyState == 4) {
+									var keyText = JSON.parse(xhr.responseText);
+									if(keyText.key) {
+										vm.myimage=path;
+										vm.pic=keyText.key;
+									} else {
+										vm.getQiniuUpTokenAndUrl(); //token过期重新获取	
+										vm.myimage='';
+										mui.toast('上传失败,请稍后重试');										
+									}
+									vm.waiting.close();
+								}
+							}
+							xhr.open("POST", url, true);
+							xhr.setRequestHeader("Content-Type", "application/octet-stream");
+							xhr.setRequestHeader("Authorization", "UpToken " + vm.token);
+							xhr.send(pic)
+						},
+						userFeedback:function(){
+							if(vm.content.length<10){
+								mui.toast('反馈内容不能小于10个字');
+								return;
+							}							
+							yh.ajax({
+								url: "/userFeedback",
+								type: "POST",
+								data:{
+									content:vm.content,
+									phone:vm.phone,
+									pic:vm.pic,
+								},
+								fn: function(data) {
+									mui.toast('提交成功');
+									mui.back();
+								}
+							}, true)
+						}
+					}
+				});
+				vm.getQiniuUpTokenAndUrl();
+			})
+		</script>
+	</body>
+
+</html>

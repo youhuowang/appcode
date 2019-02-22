@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../css/tail_goos_list.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<header class="header fixed">
+				<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+				<div class="title">尾货处理</div>
+			</header>
+			<div id="pullRefresh" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul class="main">
+						<li class="list relative" v-for="item in data" @tap="godatails(item.id)">
+							<img :src="item.goodscover" />
+							<div class="name textOver">
+								{{item.title}}
+							</div>
+							<div class="price">
+								¥ {{item.tailprice}}
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>			
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function(){
+				var vm=new Vue({
+					el:"#app",
+					data:{
+						page:0,
+						data:[],
+					},
+					methods:{
+						godatails:function(id){
+							mui.openWindow('../../module/details.html?id='+id, 'details.html', {
+								styles: {
+									popGesture: "close"
+								},
+							});
+						}
+					}
+				});
+				mui.init({
+				  pullRefresh : {
+				    container:'#pullRefresh',
+				    up : {
+				      auto:true,
+				      contentnomore:'没有更多数据了',
+				      callback :pullfresh
+				    }
+				  }
+				});
+				function pullfresh(){
+					var $this=this;
+					vm.page++;
+					yh.ajax({
+						url: "/tailGoodsList",
+						data:{
+							page:vm.page,
+							num:20,
+						},
+						type: "GET",
+						fn: function(data) {
+							for(var i=0;i<data.length;i++){
+								vm.data.push(data[i]);
+							}
+							$this.endPullupToRefresh(data.length<20);
+//							$this.disablePullupToRefresh(data.length<20);	
+						}
+					})
+				}
+				
+			})
+		</script>
+	</body>
+
+</html>

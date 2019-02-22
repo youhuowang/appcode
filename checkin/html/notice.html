@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+		<style type="text/css">
+			.header {
+				width: 100vw;
+				height: 0.46rem;
+				line-height: .46rem;
+				color: #5B5B5B;
+				top: 0;
+				z-index: 10;
+				font-size: 0.18rem;
+				background: #FFFFFF;
+			}
+			
+			.header .mui-action-back {
+				padding-left: 0.2rem;
+				font-size: 0.16rem;
+			}
+			
+			.header .title {
+				position: absolute;
+				height: 100%;
+				left: 0.5rem;
+				right: 0.5rem;
+				text-align: center;
+			}
+			
+			.main {
+				padding-top: .56rem;
+				overflow: hidden;
+				padding-bottom: 0.48rem;
+			}
+			
+			.list {
+				padding: 0.12rem 0.2rem;
+				padding-left: 0.6rem;
+				background: #FFFFFF;
+				font-size: 0.12rem;
+				color: #313131;
+				margin-bottom: 0.1rem;
+			}
+			
+			.checkbox:before {
+				content: '';
+				width: 0.22rem;
+				height: 0.22rem;
+				position: absolute;
+				left: 0.22rem;
+				top: 50%;
+				margin-top: -.11rem;
+				background: url(../../img/weigouxuan.png)no-repeat;
+				background-size: 100% 100%;
+			}
+			
+			.checkbox-active:before {
+				background: url(../../img/gouxuan.png)no-repeat;
+				background-size: 100% 100%;
+			}
+			
+			.footer {
+				width: 100vw;
+				height: 0.48rem;
+				line-height: .48rem;
+				bottom: 0;
+				border-top: 1px solid #DDDDDD;
+				background: #FFFFFF;
+			}
+			
+			.footer .label {
+				padding-left: 0.6rem;
+				font-size: 0.16rem;
+			}
+			
+			.btn-row .fl {
+				width: 1.1rem;
+				height: .48rem;
+				color: #FFFFFF;
+				font-size: 0.16rem;
+				font-weight: 500;
+				text-align: center;
+			}
+			
+			.delete {
+				background: #F5A623;
+			}
+			
+			.addto {
+				background: #F27428;
+				color: #FFFFFF;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">公告</div>
+		</header>
+		<div id="app" v-cloak>
+			<ul class="main">
+				<li v-bind:class="[{'checkbox-active':item.checkbox},'list relative checkbox']" v-for="item in list" @touchend='toggleCheckbox(item)'>
+					<div class="textOver">
+						{{item.content}}
+					</div>
+				</li>
+			</ul>
+			<div class="footer fixed">
+				<div v-bind:class="[{'checkbox-active':onOff},'fl label relative checkbox']" @touchend="ischeckboxall">
+					全选
+				</div>
+				<div class="fr btn-row">
+					<button class="fl delete" @click="delShopNotice">删除</button>
+					<a href="add_notice.html" class="fl addto">添加公告</a>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var vm = new Vue({
+					el: '#app',
+					data: {
+						list: '',
+						onOff: false,
+						ids:[],
+						//						ischeckboxall:false,
+					},
+					methods: {
+						toggleCheckbox: function(item) {
+							item.checkbox = !item.checkbox;
+							this.ischeckboxall();
+						},
+						delShopNotice:function(){
+							yh.ajax({
+								url: "/delShopNotice",
+								type: "POST",
+								data:{
+									ids:vm.ids
+								},
+								fn: function(data) {
+									vm.Initialization();
+								}
+							}, true);								
+						},
+						ischeckboxall: function(on) {
+							if(on)vm.onOff=!vm.onOff;
+							vm.ids=[];
+							var n = 0,
+								len = vm.list.length;
+							for(var i = 0; i < len; i++) {
+								if(on){
+									vm.list[i].checkbox=vm.onOff;
+								}
+								if(vm.list[i].checkbox) {
+									n++;
+									vm.ids.push(vm.list[i].id);
+								};
+							}
+							if(!on)vm.onOff = n == len ? true : false;
+						},
+						Initialization:function(){
+							vm.onOff=false;
+							yh.ajax({
+								url: "/shopNotice",
+								type: "get",
+								fn: function(data) {
+									for(var i = 0; i < data.length; i++) {
+										data[i].checkbox = false;
+									}
+									vm.list = data;
+								}
+							}, true);
+						}
+					}
+				})
+				vm.Initialization();
+				window.addEventListener('refresh', function(e) {
+					vm.Initialization();
+				});
+				mui('body').on('tap', 'a', function() {
+					var href = this.getAttribute('href');
+					mui.openWindow(href, href, {
+						styles: {
+							popGesture: "close"
+						},
+					});
+					return;
+				});
+			})
+		</script>
+	</body>
+
+</html>

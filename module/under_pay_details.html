@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/order_details.css" />
+		<link rel="stylesheet" type="text/css" href="../css/unders_pay.css" />
+		<style type="text/css">
+			.mui-scroll-wrapper{
+				top: .46rem;
+			}
+			.main{
+				padding-top: 0;
+			}
+			.orderDetails p>span {
+				color: #F27428;
+			}
+			
+			.pay-details {
+				margin-bottom: 0.1rem;
+			}
+			
+			.btn {
+				width: 0.57rem;
+				height: 0.27rem;
+				bottom: 0;
+				right: 0;
+				line-height: 0.27rem;
+				text-align: center;
+				background: #F27428;
+				font-size: 0.14rem;
+				color: #FFFFFF;
+				border-radius: 0.135rem 0 0 0.135rem;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<header class="header">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">订单详情</div>
+		</header>
+		<div class="mui-scroll-wrapper">
+			<div class="mui-scroll">
+				<div class="main" id="app" v-cloak>
+					<div class="title">
+						订单信息
+					</div>
+					<div class="orderDetails">
+						<p>订单编号：{{data.orderno}}</p>
+						<p>订单时间：{{data.addtime}}</p>
+						<p>订单金额：<span>¥ {{data.totalprice}}</span></p>
+						<p>已付金额：<span>¥ {{data.haspay}}</span></p>
+						<p>待付余额：<span>¥ {{data.nopay}}</span></p>
+						<p>订单状态：{{data.orderstatus==1?'待发货':data.orderstatus==2?'已发货':'已完成'}}</p>
+					</div>
+					<div>
+						<div class="shop-title relative">
+							<div class="fl name" @tap="goShop(data.shopid)">
+								<i class="iconfont icon-zhengliicon-13"></i> {{data.shopname}}
+							</div>
+							<div class="fr" @tap="sendmessage(data.userid)">
+								<i class="iconfont icon-youixn"></i> 联系卖家
+							</div>
+						</div>
+						<ul class="godds">
+							<li class="" v-for="item in goodslist" @tap="goDetails(item.goodsid)">
+								<div class="godds-list">
+									<div class="fl img">
+										<img :src="item.goodscover" />
+									</div>
+									<div class="godds-list-details relative">
+										<div class="name textarea">{{item.title}}</div>
+										<!--<div class="size overflow">{{item.spec}}</div>-->
+										<div class="price absolute">
+											<div class="fl">
+												¥ {{item.price}}
+											</div>
+											<div class="fr">
+												x {{item.num}}
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="spec">
+									{{item.spec}}
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="location relative">
+						<div class="fl portrait relative">
+							<div class="absolute img">
+								{{substr(data.linkman_one)}}
+							</div>
+						</div>
+						<div class="box relative">
+							<div class="location-row absolute translateY">
+								<div class="linkman">联系人1：{{data.linkman_one}} <span>{{data.linktel_one}}</span></div>
+								<div class="linkman" v-if="data.linkman_two">联系人2：{{data.linkman_two}}<span>{{data.linktel_two}}</span></div>
+								<div class="address overflow"><i class="iconfont icon_dizhi"></i>{{data.address}}</div>
+							</div>
+						</div>
+					</div>
+					<div class="title">
+						收款详情
+					</div>
+					<div class="orderDetails pay-details relative" v-for="(item,index) in payinfo">
+						<p><span>付款金额：¥ {{item.money}} </span>（请仔细核对付款金额） </p>
+						<p>付款时间：{{item.addtime}}</p>
+						<p>备注：{{item.content}}</p>
+						<div class="active btn absolute" v-if="item.status==2">
+							已确认
+						</div>
+						<div class="active btn absolute" v-else-if="data.usertype==1">
+							待确认
+						</div>
+						<div class="btn absolute" v-else-if="data.usertype==2" @click="confirmReceipt(item)">
+							确认
+						</div>
+					</div>
+					<!--<div class="tips">
+						注：{{data.protocol}}
+					</div>-->
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				mui.init({
+					beforeback: function() {　　　　
+						var list = plus.webview.currentWebview().opener(); //获得父页面的webview 	　　　　
+						mui.fire(list, 'refresh'); //触发父页面的自定义事件(refresh),从而进行刷新	
+						return true; //返回true,继续页面关闭逻辑
+					}
+				});
+				var vm = new Vue({
+					el: "#app",
+					data: {
+						data: '',
+						payinfo: '',
+						goodslist: '',
+					},
+					mounted: function() {
+						mui('.mui-scroll-wrapper').scroll();
+					},
+					methods: {
+						goDetails: function(id) {
+							location.href = 'details.html?id=' + id;
+						},
+						goShop: function(id) {
+							var href = href = 'shopindex.html?id=' + id;;
+							var id = 'shopindex.html';
+							var options = {
+								styles: {
+									popGesture: "close"
+								},
+							};
+							mui.openWindow(href, id, options);
+						},
+						sendmessage: function(uid) { //聊天
+							mui.openWindow({
+								url: '../chat/html/message.html?id=' + uid,
+								id: 'messige.html',
+								styles: {
+									top: 0,
+									bottom: 0,
+									background: '#FFFFFF',
+								},
+							})
+						},
+						confirmReceipt: function(item) {
+							yh.ajax({
+								url: '/ConfirmReceipt',
+								type: "POST",
+								data: {
+									id: item.id,
+								},
+								fn: function(reg) {
+									item.status = 2;
+								}
+							}, true);
+						},
+						substr: function(t) {
+							return t.substr(0, 1);
+						}
+					}
+				});
+				yh.ajax({
+					url: '/unlinePayInfoList',
+					type: "POST",
+					data: {
+						orderid: yh.getQueryString('id'),
+					},
+					fn: function(reg) {
+						vm.data = reg;
+						vm.payinfo = reg.payinfo;
+						vm.goodslist = reg.goodslist;
+					}
+				}, true);
+			})
+		</script>
+	</body>
+
+</html>

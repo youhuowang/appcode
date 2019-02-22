@@ -1,0 +1,173 @@
+.header{
+	width: 100vw;
+	height: 0.46rem;
+	line-height: .46rem;
+	background: #FFFFFF;
+	color: #5B5B5B;
+	top: 0;
+	z-index: 10;
+	border-bottom: 1px solid #EFEFEF;
+}
+
+.header .icon-row{
+	font-size: 0.2rem;
+}
+.header .mui-action-back{
+	padding-left: 0.2rem;
+}
+.header .title{
+	height: 100%;
+	margin-left: 0.5rem;
+	margin-right: 0.5rem;
+	text-align: center;
+	font-size: 0.18rem;
+}
+.main{
+	padding-top: .46rem;
+	padding-bottom: 0.6rem;
+}
+.title{
+	height: 0.5rem;
+	line-height: .5rem;
+	padding: 0 .2rem;
+	font-size: 0.18rem;
+	font-weight: 500;
+	color:#505050;
+}
+.orderDetails{
+	padding: .07rem 0.2rem;
+	background: #FFFFFF;
+}
+.orderDetails p{
+	font-size: 0.14rem;
+	color: #5B5B5B;
+}
+.form-list{
+	height: 0.4rem;
+	line-height: 0.4rem;
+	padding: 0 0.2rem;
+	font-size: 0.16rem;
+	color: #222222;
+	background: #FFFFFF;
+	margin-bottom: 1px;
+}
+.form-list .name{
+	width: 0.5rem;
+}
+.input-row{
+	margin-left: .5rem;
+}
+.input-row input{
+	width: 100%;
+}
+.tips{
+	padding: 0.08rem 0.2rem;
+	font-size: 0.12rem;
+	color: #848484;
+}
+.send{
+	width: 1.06rem;
+	height: 0.36rem;
+	line-height: .36rem;
+	text-align: center;
+	font-size: 0.16rem;
+	color: #FFFFFF;
+	background: #F5A623;
+	margin: .62rem auto;
+	border-radius: 0.2rem;
+}
+.send-active{
+	opacity:.5;
+}
+.location{
+	height: .75rem;
+}
+.location:before{
+	height: 0;
+}
+.location .location-row:before{
+	display: none;
+}
+.location .location-row{
+	padding-right: 0;
+}
+.shop-title:before{
+	content: '';
+	width: 100%;
+	height: 0.07rem;
+	position: absolute;
+	left: 0;
+	top: 0;
+	background: url(../img/shop_title.png)no-repeat;
+	background-size: 100% 100%;
+}
+.shop-title .iconfont{
+	font-size: 0.14rem;
+}
+
+.spec{
+	padding:0.1rem 0.2rem;
+	font-size: 0.14rem;
+	line-height: 0.2rem;
+	background: #FFFFFF;
+	margin-bottom: 1px;
+}
+.order-price{
+	width: 3.52rem;
+	height: 0.8rem;
+	margin: 0 auto;
+	margin-top: 0.1rem;
+	border-radius: 0.08rem;
+	background: #F27428;
+	padding:0 0.11rem;
+	color: #FFFFFF;
+	font-size: 0;
+}
+.order-price .text{
+	font-size: 0.14rem;
+	font-weight: 500;
+}
+.order-price .price{
+	font-size: 0.24rem;
+	font-weight: 600;
+	text-align: center;
+	margin-top: 0.08rem;
+}
+.pay-list{
+	height: 0.5rem;
+	line-height: .5rem;
+	background: #FFFFFF;
+	font-size: 0.16rem;
+	margin-bottom: 1px;
+	padding: 0 0.2rem;
+}
+.pay-active:before{
+	content: '';
+	width: 0.27rem;
+	height: 0.27rem;
+	position: absolute;
+	right: 0.2rem;
+	top: 50%;
+	margin-top: -.135rem;
+	background: url(../img/gouxuan.png)no-repeat;
+	background-size: 100% 100%;
+}
+.pay-list img{
+	display: inline-block;
+	width: 0.36rem;
+	height: 0.36rem;
+	margin-top: -.03rem;
+	margin-right: 0.16rem;
+}
+.pay-send{
+	width: 100%;
+	height: 0.48rem;
+	line-height: 0.48rem;
+	bottom: 0;
+	margin-bottom: 0;
+	border-radius: 0;
+	background: #F27428;
+}
+.send:active{
+	opacity: .5;
+}

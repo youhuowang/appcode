@@ -1,0 +1,61 @@
+.header {
+	width: 100vw;
+	height: 0.46rem;
+	line-height: .46rem;
+	background: #FFFFFF;
+	color: #5B5B5B;
+	top: 0;
+	z-index: 10;
+	border-bottom: 1px solid #EFEFEF;
+}
+
+.header .icon-row {
+	font-size: 0.2rem;
+}
+
+.header .mui-action-back {
+	padding-left: 0.2rem;
+}
+
+.header .icon-youixn {
+	padding-right: .2rem;
+}
+
+.header .title {
+	position: absolute;
+	height: 100%;
+	left: 0.5rem;
+	right: 0.5rem;
+	text-align: center;
+	font-size: 0.18rem;
+}
+.header~.mui-content .mui-fullscreen {
+	top: .46rem;
+	height: auto;
+}
+.mui-segmented-control.mui-scroll-wrapper .mui-control-item{
+	width: 33.3%;
+	height: 100%;
+	padding: 0;
+	color: #7A7A7A;
+	font-size: 0.14rem;
+}
+.mui-segmented-control.mui-scroll-wrapper,.mui-segmented-control.mui-scroll-wrapper .mui-scroll{
+	width: 100%;
+	height: .4rem;
+	border-bottom: 1px solid #c8c7cc;
+}
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{
+	color: #F27428;
+	font-weight: 600;
+}
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active:before{
+	content: '';
+	width: 60%;
+	height:0.03rem;
+	background: #F27428;
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	margin-left: -30%;
+}

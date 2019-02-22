@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/addGood_friend.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+		<style type="text/css">
+			.main{
+				padding-top: .56rem;
+			}
+			.user-list{
+				margin-top: 0.1rem;
+			}
+			.button-active{
+			    height: 0.22rem;
+			    top: 50%;
+			    right: 0.2rem;
+			    margin-top: -.11rem;
+			    outline: none;
+			    font-size: 0.14rem;
+			    background: #FFFFFF;
+			    color: #444444;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">好友申请</div>
+		</header>
+		<div id="app" class="main" v-cloak>
+			<ul class="user-row">
+				<li class="user-list relative" v-for="item in data" @tap="gouser(item.userid)">
+					<div class="fl portrait">
+						<img :src="item.headpic"/>
+					</div>
+					<div class="details fl">
+						<div class="table">
+							<div class="table-cell">
+								<div class="name overflow">{{item.username}}</div>
+								<p class="phone">{{item.checkmess}}</p>
+							</div>
+						</div>
+					</div>
+					<button v-bind:class="[{'button':item.type==2,'button-active':item.type==1},'absolute']" @tap.stop='gocode(item.userid,item.type)'>
+						{{item.type==2?'同意':'等待验证'}}
+					</button>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function(){
+				window.addEventListener('refresh', function(e) {
+					pullfresh();//返回刷新余额
+				});
+				localStorage.removeItem("addFriend");
+				mui.init({
+					beforeback: function() {　　　　
+						var list = plus.webview.currentWebview().opener(); //获得父页面的webview 	　　　　
+						mui.fire(list, 'refresh'); //触发父页面的自定义事件(refresh),从而进行刷新	
+						return true; //返回true,继续页面关闭逻辑
+					}
+				});
+				var vm=new Vue({
+					el:"#app",
+					data:{
+						data:'',
+					},
+					methods:{
+						gouser:function(id){
+							mui.openWindow('userdetails.html?id='+id, 'code_friend_application.html', {
+								styles: {
+									popGesture: "close",
+									background:'#FFFFFF',
+								},
+							});
+						},
+						gocode:function(id,type){
+							if(type==1)return;//							
+							mui.openWindow('code_friend_application.html?id='+id, 'code_friend_application.html', {
+								styles: {
+									popGesture: "close",
+									background:'#FFFFFF',
+								},
+							});
+						}
+					}
+				});
+				function pullfresh(){
+					yh.ajax({
+						url: "/addFriendList",
+						type: "GET",
+						fn: function(data) {
+							vm.data=data;
+						}
+					}, true);	
+				};
+				pullfresh();
+				
+			})
+		</script>
+	</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/message.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+	</head>
+	<body>
+		<div id="app" class="hide" @touchstart="hidepopovers" @tap="hide('hide',$event)" v-cloak>
+			<header class="header absolute">
+				<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+				<div @tap="gohistorymsg(friend.friend_id)" class="fr">历史记录</div>
+				<div class="title friend">消息</div>
+			</header>
+			<div v-bind:class="[{'wrapper-bottom':isimg,system:friend.friend_id=='system'},'mui-scroll-wrapper']">
+				<div class="mui-scroll" >
+					<div class="main">
+						<div v-bind:class="itemclass(item.senderUserId)" v-for="item in msglist">
+							<div class="sentTime">{{item.time}}</div>
+							<img class="msg-user-img" v-if="item.messageType!='RecallCommandMessage'" :src="item.content.extra.img" @tap="gouserdatails(item)"></img>
+							<div class="recallmsg" v-if="item.messageType=='RecallCommandMessage'">{{item.content.content}}</div>
+							<div class="msg-content" v-if="item.messageType!='RecallCommandMessage'"  v-on:longtap="showpopovers($event,item)" @touchstart='preventDefault' @tap.stop="openWindow(item)">		
+								<!--{{showTime(item.sentTime)}}-->
+								<div class="msg-content-text" v-if="item.messageType=='TextMessage'" v-html="item.content.content"></div>
+								<div class="msg-content-audio relative" v-if="item.messageType=='VoiceMessage'" @tap="play(item.content.content,$event)">
+									{{item.audiotim}}″
+								</div>
+								<img class="msg-content-image" v-if="item.messageType=='ImageMessage'" msg :src="item.content.content+'?v=2'" @tap="yhh($event)"></img>																
+							</div>
+						</div>
+					</div>
+					<!--<audio id='audio' src="https://pk0osuxko.bkt.clouddn.com/1547628440337"  controls="controls"></audio>-->
+				</div>
+			</div>
+			<ul id="popovers" class="popovers absolute">
+				<li class="popovers-list" v-if="msg.messageType=='TextMessage'" @touchstart="preventDefault" @tap="copy(msg.content.content)">复制</li>
+				<li class="popovers-list" v-if="msg.messageType=='ImageMessage'" @tap="savePicture">保存图片</li>
+				<li class="popovers-list" v-if="msg.senderUserId!=friend.friend_id" @touchstart="preventDefault" @tap="sendRecallMessage">撤销</li>
+			</ul>
+			<audio id='audio' src="../../img/075888piCqB9.mp3"></audio>
+			<div class="sound absolute" v-if="isvoice">
+				<img src="../../img/icon/sound.png"/>
+				<p>{{soundtim}}秒</p>
+			</div>
+			<div class="footer absolute" v-if="friend.friend_id!='system'">
+				<div class="footer-box relative">
+					<div class="footer-left absolute" @tap="type=!type;plus.key.hideSoftKeybord()">
+						<span v-bind:class="[{'icon-jianpan':type,'icon-yuyin':!type},'iconfont']"></span>
+					</div>
+					<div class="footer-center">
+						<div ref="input" class='input-text' id="symptomTxt" type="text"  contenteditable="true" @focus="isimg=false" v-on:input="value" v-show="type"></div>
+						<!--<textarea id="symptomTxt"  type="text" class='input-text' @focus="isimg=false" v-model="msgcon" v-show="type"></textarea>-->
+						<button type="button" class='input-sound' v-show="!type" v-on:release="audiostop" v-on:hold="getRecorder">按住说话</button>
+					</div>
+					<div class="footer-right absolute" v-show="!iscon" @tap="isimg=!isimg">
+						<span class="iconfont icon-tianjia"></span>
+					</div>
+					<div class="sendContent absolute" v-show="iscon" @touchstart='preventDefault' @tap="sendText">
+						发送
+					</div>
+				</div>
+				<div class="footer-button fl table" v-show="isimg">
+					<div class="table-cell">
+						<div class="button-item fl" @tap="selectImage">
+							<div class="button-row-icon iconfont icon-tupian"></div>
+							<p class="button-row-name">相册</p>
+						</div>
+						<div class="button-item fl" @tap="captureImage">
+							<div class="button-row-icon iconfont icon-31paishexuanzhong"></div>
+							<p class="button-row-name">拍照</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript" src="../../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/rongyun.js"></script>
+		<script type="text/javascript" src="../js/getmsg.js"></script>
+		<!--<script src="https://unpkg.com/qiniu-js"></script>-->
+		<script type="text/javascript" src="../js/message.js"></script>
+	</body>
+
+</html>

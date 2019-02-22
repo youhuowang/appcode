@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">		
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/detailed.css"/>
+		<style type="text/css">
+			.main{
+				padding-top: .56rem;
+			}
+			.mian-head{
+				width: 3.55rem;
+				min-height: 0.94rem;
+				background:rgba(254,254,254,1);
+				box-shadow:0px 0px 0.06rem 0.02rem rgba(0,0,0,0.05);
+				border-radius:0.09rem;
+				margin: 0 auto;
+				padding: 0.15rem 0.08rem;
+				padding-left: 0.47rem;
+			}
+			.mian-head:before{
+				content: '';
+				width: 0.39rem;
+				height: 0.47rem;
+				position: absolute;
+				left: 0;
+				top: 0;
+				background: url(../../img/icon/Group15Copy@2x.png)no-repeat;
+				background-size: 100% 100%;
+			}
+			.detailed-list{
+				height: 0.5rem;
+				padding: 0 0.2rem;
+			}
+			.detailed-list .table{	
+				width:auto;
+				height: 100%;
+				font-weight:300;
+			}
+			.mian-head .title{
+				font-size: 0.16rem;
+				color: #484746;
+			}
+			.mian-head .title .color{
+				font-size: 0.2rem;
+				font-weight: 500;
+				color: #F27428;
+			}
+			.mian-head .title .size{
+				font-size: 0.3rem;
+				color: #5B5B5B;
+			}
+			.mian-head .text{
+				font-size:0.12rem;
+				font-weight:400;
+				color:rgba(140,140,140,1);
+			}
+			.detailed{
+				padding-top: 0.1rem;
+			}
+			.detailed-time{
+				height: .5rem;
+				line-height: .5rem;
+				font-size: 0.24rem;
+				font-weight: 500;
+				color: #000000;	
+				padding: 0 0.2rem;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">待结算余额</div>
+		</header>
+		<div class="main" id="app" v-cloak>
+			<div class="mian-head relative">
+				<div class="title">什么是<span class="color">待结算</span>余额<span class="size">?</span></div>
+				<div class="text">{{data.protocol}} </div>
+			</div>
+			<ul class="detailed">
+	   			<!--<div class="detailed-time">
+	   				2018年09月   					   				
+	   			</div>-->
+	   			<li class="detailed-list" v-for="list in data.list">
+	   				<div class="table fl">
+	   					<div class="table-cell">
+	   						<p>订单编号：{{list.orderno}}</p>
+	   						<p>{{list.addtime}}</p>
+	   					</div>			   					
+	   				</div>
+	   				<div class="table fr">
+	   					<div class="table-cell">
+	   						<div class="price">¥ {{list.totalprice}}</div>
+	   						<div class="status">{{list.orderstatus==0?'未付款':list.orderstatus==1?'待发货':"待收货"}}</div>
+	   					</div>			   					
+	   				</div>
+	   			</li>
+	   		</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function(){
+				var vm=new Vue({
+					el:"#app",
+					data:{
+						data:''
+					}					
+				})
+				yh.ajax({
+					url: "/unAvailablebalanceDateil",
+					type: "get",
+					fn: function(data) {
+						vm.data=data;
+					}
+				});
+			})
+		</script>
+	</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/unders_pay.css" />
+	</head>
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">继续付款</div>
+		</header>
+		<div class="main" id="app" v-cloak>
+			<div class="order-price table">
+				<div class="table-cell">
+					<div class="text">
+						订单金额（元）：
+					</div>
+					<div class="price">
+						¥ {{data.totalprice}}
+					</div>
+				</div>
+			</div>
+			<div class="title">
+				继续付款
+			</div>
+			<div class="form">
+				<div class="form-list">
+					订单编号：{{data.orderno}}
+				</div>
+				<div class="form-list">
+					订单时间：{{data.addtime}}
+				</div>
+				<div class="form-list">
+					订单状态：{{orderstatus(data.orderstatus)}}
+				</div>
+				<div class="form-list">
+					订单备注：{{data.content}}
+				</div>
+				
+			</div>
+			<div class="title">
+				支付方式
+			</div>
+			<div v-bind:class="[{'pay-active':paytype==2},'pay-list relative']" @tap="paytype=2">
+				<img src="../img/icon/wx_channel.png"/>微信支付
+			</div>
+			<div v-bind:class="[{'pay-active':paytype==1},'pay-list relative']" @tap="paytype=1">
+				<img src="../img/icon/ali_channel.png"/>支付宝支付
+			</div>
+			<div class="send pay-send fixed" @click="send">
+				提交
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript" src="../js/unders_pay.js"></script>
+	</body>
+</html>

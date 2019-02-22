@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/delGoodsList.css" />
+		<style type="text/css">
+			.addTail{
+				width: 3.52rem;
+				height: 0.88rem;
+				margin: 0 auto;
+				background: #FFFFFF;
+				margin-top: 0.1rem;
+				font-size: 0.14rem;
+				color: #2F2F2F;
+				text-align: center;
+				border-radius:0.15rem;
+				border:1px solid rgba(36,86,179,1);
+			}
+			.addTail .add{
+				height: 0.3rem;
+				margin-bottom: 0.07rem;
+			}
+			.addTail .add:before{
+				content: '+';
+				width: 0.3rem;
+				height: .3rem;
+				line-height: .3rem;
+				position: absolute;
+				top: 0;
+				left: 50%;
+				margin-left: -.15rem;
+				border-radius: 100%;
+				background: #F27428;
+				color: #FFFFFF;
+				font-size: 0.18rem;
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">尾货处理</div>
+		</header>
+		<div class="main relative" id="app" v-cloak>
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+				<div class="addTail table" @touchend="addTail">
+					<div class="table-cell">
+						<div class="add relative"></div>
+						<p>添加尾货</p>
+					</div>
+				</div>
+				<ul class="mui-scroll">
+					<li class="list" v-for="(item,i) in data">
+						<div class="img fl">
+							<img :src="item.goodscover" />
+						</div>
+						<div class="details relative">
+							<div class="details-title textOver">{{item.title}} </div>
+							<div class="price absolute">
+								<p class="details-price">
+									处理价: <span>¥ {{item.tailprice}} </span>
+								</p>
+							</div>
+							<div class="upperShelfGoods absolute" @touchend="goGoods(item.id)">
+								编辑 
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				window.addEventListener('refresh', function(e) {
+					vm.waiting = plus.nativeUI.showWaiting("正在刷新 ..");
+					vm.page=0;					
+					pullupRefresh(true); //返回刷新余额
+				});
+				var vm = new Vue({
+					el: "#app",
+					data: {
+						page: 0,
+						data: [],
+						waiting:'',
+					},
+					methods: {
+						goGoods: function(id) {
+							mui.openWindow("new_goods.html?id="+id, 'new_goods.html', {
+								styles: {
+									popGesture: "close"
+								},
+							});
+						},
+						addTail:function(){
+							mui.openWindow("new_goods.html?istail=2", 'new_goods.html', {
+								styles: {
+									popGesture: "close"
+								},
+							});
+						}
+					}
+				});
+				mui.init({
+					beforeback: function() {　　　　
+						var list = plus.webview.currentWebview().opener(); //获得父页面的webview 	　　　　
+						mui.fire(list, 'refresh'); //触发父页面的自定义事件(refresh),从而进行刷新	
+						return true; //返回true,继续页面关闭逻辑
+					},
+					pullRefresh: {
+						container: "#pullrefresh",
+						up: {
+							height: 50, //可选.默认50.触发上拉加载拖动距离
+							auto: true, //可选,默认false.自动上拉加载一次
+							callback: pullupRefresh //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+						}
+					}
+				});
+				function pullupRefresh(on) {
+					vm.page++;
+					yh.ajax({
+						url: '/userTailGoods',
+						type: "GET",
+						data: {
+							page: vm.page,
+							num: 20,
+						},
+						fn: function(data) {
+							if(on)vm.data=[];
+							for(var i = 0; i < data.length; i++) {
+								vm.data.push(data[i]);
+							}
+							if(vm.waiting!='')vm.waiting.close();
+							mui('#pullrefresh').pullRefresh().disablePullupToRefresh(data.length < 20);
+						}
+					}, true)
+				}
+			})
+		</script>
+	</body>
+
+</html>

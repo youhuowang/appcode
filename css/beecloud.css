@@ -1,0 +1,122 @@
+.header{
+	width: 100vw;
+	height: 0.46rem;
+	line-height: .46rem;
+	background: #FFFFFF;
+	color: #5B5B5B;
+	top: 0;
+	z-index: 10;
+	border-bottom: 1px solid #EFEFEF;
+}
+
+.header .icon-row{
+	font-size: 0.2rem;
+}
+.header .mui-action-back{
+	padding-left: 0.2rem;
+}
+.header .title{
+	height: 100%;
+	margin-left: 0.5rem;
+	margin-right: 0.5rem;
+	text-align: center;
+	font-size: 0.18rem;
+}
+.main{
+	padding-top: .46rem;
+	padding-bottom: 0.6rem;
+}
+.tag{
+	height: 0.5rem;
+	line-height: 0.5rem;
+	text-align:center;
+	font-size: 0.24rem;
+	color: #070707;
+}
+.title{
+	height: .5rem;
+	line-height: .5rem;
+	font-size: 0.18rem;
+	font-weight: 500;
+	color: #2B2B2B;
+	padding-left: 0.2rem;
+}
+.bill_no,.total_fee{
+	height: 0.5rem;
+	line-height: 0.5rem;
+	padding-left: 0.2rem;
+	font-size: 0.14rem;
+	color: #5A5A5A;
+	background: #FFFFFF;
+}
+.bill_no{
+	margin-bottom: 0.01rem;
+}
+.channel-row{
+	height: 0.5rem;
+	line-height: .5rem;
+	font-size: 0.16rem;
+	color: #5B5A5A;
+	padding-left: 0.2rem;
+	background: #FFFFFF;
+	margin-bottom: 1px;
+}
+.channel-row:before{
+	content: '';
+	width: 0.27rem;
+	height: 0.27rem;
+	position: absolute;
+	right: 0.2rem;
+	top: 50%;
+	margin-top: -.135rem;
+	background: url(../img/weigouxuan.png)no-repeat;
+	background-size: 100% 100%;
+}
+.active:before{
+	background: url(../img/gouxuan.png)no-repeat;
+	background-size: 100% 100%;
+}
+.channel-row img{
+	display: inline-block;
+	width: 0.36rem;
+	height: 0.36rem;
+	margin-right: 0.16rem;
+}
+
+.footer{
+	width: 100vw;
+	height: 0.48rem;
+	bottom: 0;
+	line-height: 0.48rem;
+	font-size: 0.16rem;
+	color: #FFFFFF;
+	text-align: center;
+}
+/* .footer div{
+	width: 50vw;
+	height: 100%;
+} */
+.query{
+	background:#F5A623;
+}
+.pay{
+	width: 100%;
+	background: #F74B14;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

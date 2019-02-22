@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/order_details.css" />
+		<link rel="stylesheet" type="text/css" href="../css/orderDetails.css" />
+	</head>
+
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">订单详情</div>
+		</header>
+		<div id="app" v-cloak>
+			<div class="main">
+				<div class="orderDetails">
+					<p>订单编号：{{data.orderno}}</p>
+					<p>订单时间：{{data.addtime}}</p>
+					<p>支付方式：{{paytype(data.paytype)}}</p>
+					<p>订单状态：{{orderstatus(data.orderstatus)}}</p>
+					<p>订单留言：{{data.content}}</p>
+				</div>
+				<div>
+					<div class="shop-title relative">
+						<div class="fl name" @tap="goShop(data.shopid)">
+							<i class="iconfont icon-zhengliicon-13"></i> {{data.shopname}}
+						</div>
+						<div class="fr" @tap="sendmessage(data.userid)">
+							<i class="iconfont icon-youixn"></i> 联系卖家
+						</div>
+					</div>
+					<ul class="godds">
+						<li class="" v-for="item in goodslist" @tap="goDetails(item.goodsid)">
+							<div class="godds-list">
+								<div class="fl img">
+									<img :src="item.goodscover" />
+								</div>
+								<div class="godds-list-details relative">
+									<div class="name textOver">{{item.title}}</div>
+									<!--<div class="size overflow">{{item.spec}}</div>-->
+									<div class="price absolute">
+										<div class="fl">
+											¥ {{item.price}}
+										</div>
+										<div class="fr">
+											x {{item.num}}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="spec">
+								{{item.spec}}
+							</div>
+						</li>
+					
+					</ul>
+				</div>
+				<div class="location relative">
+					<div class="fl portrait relative">
+						<div class="absolute img">
+							{{substr(data.linkman_one)}}
+						</div>
+					</div>
+					<div class="box relative">
+						<div class="location-row absolute translateY">
+							<div class="linkman">联系人1：{{data.linkman_one}} <span>{{data.linktel_one}}</span></div>
+							<div class="linkman" v-if="data.linkman_two">联系人2：{{data.linkman_two}}<span>{{data.linktel_two}}</span></div>
+							<div class="address overflow"><i class="iconfont icon_dizhi"></i>{{data.address}}</div>
+						</div>
+					</div>
+				</div>
+				<div class="button">
+					<div class="button-list" v-if="data.usertype==1&&data.paytype==0" @tap="delOrder">
+						取消订单
+					</div>
+					<div class="button-list active" v-if="data.usertype==1&&data.orderstatus==1" @tap="remindSendGoods">
+						提醒发货
+					</div>
+					<!--orderstatus-->
+					<div class="button-list active" v-if="data.usertype==2&&data.paytype!=0&&data.orderstatus==1" @tap='ConfirmSend'>
+						确认发货
+					</div>
+					<div class="button-list active" v-if="data.usertype==1&&data.orderstatus==2" @tap='ConfirmCollect'>
+						确认收货
+					</div>
+					<!--<div class="button-list active">
+						提醒收货
+					</div>-->
+					<div class="button-list" v-if="data.orderstatus==3">
+						交易完成
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				mui.init({
+					beforeback: function() {　　　　
+						var list = plus.webview.currentWebview().opener(); //获得父页面的webview 	　　　　
+						mui.fire(list, 'refresh'); //触发父页面的自定义事件(refresh),从而进行刷新	
+						return true; //返回true,继续页面关闭逻辑
+					}
+				});
+				var vm = new Vue({
+					el: "#app",
+					data: {
+						goodslist: '',
+						data: '',
+					},
+					methods: {
+						goDetails: function(id) {
+							location.href = 'details.html?id=' + id;
+						},
+						goShop: function(id) {
+							var href = href = 'shopindex.html?id=' + id;;
+							var id = 'shopindex.html';
+							var options = {
+								styles: {
+									popGesture: "close"
+								},
+							};
+							mui.openWindow(href, id, options);
+						},
+						sendmessage:function(uid){//聊天
+							mui.openWindow({
+								url: '../chat/html/message.html?id='+uid,
+								id: 'messige.html',
+								styles: {
+									top: 0,
+									bottom: 0,
+									background:'#FFFFFF',
+								},
+							})
+						},
+						delOrder: function() { //取消订单
+							mui.confirm('你确定要取消该订单吗？取消后无法恢复。','提示',['取消','确定'],function(e){
+								if (e.index == 1) {
+									yh.ajax({
+										url: '/delOrder',
+										type: "POST",
+										data: {
+											orderid: vm.data.orderid,
+										},
+										fn: function(reg, msg) {
+											mui.toast('订单已取消');
+											mui.back();
+										}
+									}, true);
+								}
+							})
+						},
+						remindSendGoods:function(){
+							yh.ajax({
+								url: '/remindSendGoods',
+								type: "POST",
+								data: {
+									orderid: vm.data.orderid,
+								},
+								fn: function(reg) {
+									mui.toast('提醒成功');
+								}
+							}, true);
+						},
+						ConfirmSend: function() { //确认发货
+							mui.confirm('执行此操作前请确认该订单的详细信息，是否继续该操作？','',['取消','确定'],function(e){
+								if (e.index == 1) {
+									yh.ajax({
+										url: '/ConfirmSend',
+										type: "POST",
+										data: {
+											orderid: vm.data.orderid,
+										},
+										fn: function(reg) {
+											vm.data.orderstatus=4;
+											mui.toast('操作成功');
+										}
+									}, true);
+								}
+							})
+							
+						},
+						ConfirmCollect: function() { //确认收货
+							mui.confirm('请确保已收到该商品后，再执行此操作，是否继续该操作？','',['取消','确定'],function(e){
+								if (e.index == 1) {
+									yh.ajax({
+										url: '/ConfirmCollect',
+										type: "POST",
+										data: {
+											orderid: vm.data.orderid,
+										},
+										fn: function(reg) {
+											vm.data.orderstatus = 3;
+										}
+									}, true);
+								}
+							})
+						},
+						substr: function(t) {
+							return t.substr(0, 1);
+						},
+						paytype: function(type) {
+							return type == 0 ? "未支付" : type == 1 ? "支付宝" : type == 2 ? "微信" : type == 3 ? '延期付款（未付完）' : '延期付款（已付完）';
+						},
+						orderstatus: function(n) {
+							return n == 0 ? '待支付' : n == 1 ? '待发货 ' : n == 2 ? '已发货' : '已完成';
+						}
+					},
+
+				}) 
+				yh.ajax({
+					url: '/orderInfo',
+					type: "GET",
+					data: {
+						orderid: yh.getQueryString('id'),
+					},
+					fn: function(data) {
+						console.log(JSON.stringify(data))
+						vm.goodslist = data.goodslist;
+						vm.data = data;
+					}
+				}, true)
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,40 @@
+html{
+	background: #FFFFFF;
+}
+.header {
+	width: 100vw;
+	height: 0.46rem;
+	line-height: .46rem;
+	color: #5B5B5B;
+	top: 0;
+	z-index: 10;
+	font-size: 0.18rem;
+	background: #FFFFFF;
+}
+.header:before{
+	content: '';
+	width: 100%;
+	height: 1px;
+	position: absolute;
+	background: #dedede;
+	bottom: 0;
+}
+.header .mui-action-back {
+	padding-left: 0.2rem;
+	font-size: 0.16rem;
+}
+.header .title {
+	position: absolute;
+	height: 100%;
+	left: 0.5rem;
+	right: 0.5rem;
+	text-align: center;
+}
+.main{
+	padding:0.2rem;
+	padding-top: .66rem;
+	color: #505050;
+	font-size: 0.16rem;
+	text-indent:2em;
+	overflow: hidden;
+}

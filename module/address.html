@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/address.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<header class="header fixed">
+				<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+				<div class="title">我的地址</div>
+			</header>
+			<div class="main">
+				<ul class="address-box">
+					<li class="list" v-for="(item,index) in list">
+						<div class="address-top">
+							<div class="portrait fl relative">
+								<div class="img absolute">
+									{{substr(item.linkman_one)}}
+								</div>
+							</div>
+							<div class="address-details relative">
+								<div class="address-details-box absolute">
+									<div class="address-details-phone" v-if="item.linkman_one">{{item.linkman_one}}<span>{{item.linktel_one}}</span></div>
+									<div class="address-details-phone" v-if="item.linkman_two">{{item.linkman_two}}<span>{{item.linktel_two}}</span></div>
+									<div class="address-details-address overflow">{{item.address}}</div>
+								</div>
+							</div>
+						</div>
+						<div class="address-button">
+							<div v-bind:class="[{'label-active':item.isdefault==2},'label fl']" @touchend='setDefaultAddress(index,item.id)'>
+								<div class="checkbox relative fl"></div>
+								<div class="text fl">设为默认地址</div>
+							</div>
+							<div class="button-row fr" @touchend='delUserAddress(index,item.id)'>
+								<i class="iconfont icon-zhengliicon-17"></i> 删除
+							</div>
+							<div class="button-row fr">
+								<a :href="'new_address.html?id='+item.id">
+									<i class="iconfont icon-bianji"></i> 编辑
+								</a>
+							</div>
+						</div>
+					</li>
+
+				</ul>
+				<div class="fixed newAdd">
+					<a href="new_address.html">添加新地址</a>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+
+				var vm = new Vue({
+					el: '#app',
+					data: {
+						list: '',
+					},
+					created() {
+						yh.ajax({
+							url: '/userAddress',
+							type: 'get',
+							fn: function(data) {
+								vm.list = data;
+							}
+						}, true)
+					},
+					methods: {
+						delUserAddress: function(n, id) {
+							yh.ajax({
+								url: '/delUserAddress',
+								type: 'post',
+								data: {
+									addressid: id,
+								},
+								fn: function(data) {
+									vm.list.splice(n, 1);
+								}
+							}, true)
+						},
+						setDefaultAddress: function(n, id) {
+							yh.ajax({
+								url: '/setDefaultAddress',
+								type: 'post',
+								data: {
+									addressid: id,
+								},
+								fn: function(data) {
+									var list = vm.list,
+										i = 0,
+										len = list.length;
+									for (i; i < len; i++) {
+										list[i].isdefault = i == n ? 2 : 1;
+									}
+								}
+							}, true)
+						}
+					},
+					computed: {
+						substr() {
+							return function(text) {
+								return text.substr(0, 1);
+							}
+						}
+					}
+				})
+			});
+		</script>
+	</body>
+
+</html>

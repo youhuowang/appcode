@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/Administration.css" />
+	</head>
+
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="fr right">
+				<a href="delGoodsList.html">已下架</a>
+			</div>
+			<div class="title">商品管理</div>
+		</header>
+		<div class="main relative" id="app" v-cloak>
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul>
+						<li class="list" v-for="(item,index) in data">
+							<div class="list-content relative">
+								<div class="img fl">
+									<img :src="item.goodscover" />
+								</div>
+								<div class="details relative">
+									<div class="details-title textOver">{{item.title}}</div>
+									<div class="price absolute">
+										<p class="details-price">
+											零售价: <span>¥ {{item.retailprice}}</span>&nbsp;&nbsp;&nbsp;批发价: <span>¥ {{item.wholesaleprice}}</span>
+										</p>
+										<p class="details-price">
+											装包价: <span>¥ {{item.packingprice}}</span>
+										</p>
+									</div>									
+								</div>
+								<div class="list-btn absolute" @touchend="item.toggole=!item.toggole"></div>
+							</div>
+							<div class="list-footer" v-show="item.toggole">
+								<button class="fl" @click="lowerShelfGoods(item.id,index)">下架</button>
+								<button v-bind:class="[{'button-active':item.recommend==2},'fl']" @click="toggleGoods(item)">推荐</button>
+								<button class="fl"><a :href="'new_goods.html?id='+item.id">编辑</a></button>
+								<button class="fl" @click="delGoods(item.id,index)">删除</button>
+							</div>
+						</li>						
+					</ul>
+					
+				</div>
+				<a href="new_goods.html" class="add-btn fixed">
+					+添加商品
+				</a>
+			</div>
+
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../js/Administration.js"></script>
+	</body>
+
+</html>

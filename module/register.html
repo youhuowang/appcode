@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/register.css" />
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<div class="back mui-action-back">
+				<i class="iconfont icon-back"></i> 返回
+			</div>
+			<div class="form" v-cloak>
+				<div class="title">
+					新用户注册
+				</div>
+				<div class="input-group">
+					<div class="input-row relative">
+						<input type="tel" class="absolute" v-model="phone" placeholder="请输入手机号" />
+					</div>
+					<div class="input-row relative">
+						<input type="number" class="absolute" v-model="code" placeholder="验证码" />
+						<div class="get-code translateY absolute" @tap="obtainCode">{{codeText}}</div>
+					</div>
+					<div class="input-row relative">
+						<input type="password" class="absolute" v-model="password" placeholder="请输入密码：" />
+					</div>
+					<div class="send" @tap="send">
+						下一步
+					</div>
+				</div>
+				<div class="explain">
+					<p>﹡ 此手机号将用于账号登录使用</p>
+					<p>﹡ 注册后不可修改</p>
+				</div>
+			</div>
+			<div class="protocol">
+				注册即代表阅读并同意
+				<a href="protocol.html?title=注册协议">服务条款</a>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				mui.init({
+					beforeback: function() {　　　　
+						var list = plus.webview.currentWebview().opener();　　　　
+						mui.fire(list, 'refresh', {
+							phone:vm.phone
+						});
+						return true;
+					}
+				});
+				var vm = new Vue({
+					el: '#app',
+					data: {
+						onOff: true,
+						waiting: '',
+						phone: '',
+						password: '',
+						code: '',
+						tag: true,
+						toggleCode: true,
+						toggleClass: true,
+						myreg: /^1(3|4|5|7|8|9)\d{9}$/,
+						isPassword: /^[a-zA-Z0-9]{6,24}$/,
+						codeText: '发送验证码',
+					},
+					methods: {
+						obtainCode: function() {
+							if(!this.isObtain) return;
+							vm.waiting = plus.nativeUI.showWaiting();
+							this.onOff = false;
+							var second = 60,
+								timer = null;
+							yh.ajax({
+								url: "/getSmsCode",
+								data: {
+									phone: vm.phone,
+									type: 1,
+								},
+								type: "post",
+								fn: function(data) {
+									vm.waiting.close();
+									vm.codeText = second + '秒';
+									timer = setInterval(function() {
+										second -= 1;
+										if(second > 0) vm.codeText = second + "秒";
+										else {
+											clearInterval(timer);
+											vm.codeText = "发送验证码";
+											vm.onOff = true;
+										}
+									}, 1000);
+								}
+							},false,function(reg){
+								vm.waiting.close();
+								vm.onOff = true;
+								mui.toast(reg.message);
+							});
+						},
+						send: function() {
+							var info='';
+							if(!this.myreg.test(this.phone)){
+								mui.toast('请检查手机号是否输入正确');
+								return;
+							}
+							if(this.code.length != 6){
+								mui.toast('验证码有误');
+								return;
+							}
+							if(this.isPassword.length<6){
+								mui.toast('请输入6-24位密码');
+								return;
+							}
+							if(!this.isPassword.test(this.password)){
+								mui.toast('密码格式不正确');
+								return;
+							}
+							vm.waiting = plus.nativeUI.showWaiting();
+							yh.ajax({
+								url: "/register",
+								data: {
+									phone: vm.phone,
+									password: vm.password,
+									code: vm.code
+								},
+								type: "post",
+								fn: function(data) {
+									vm.waiting.close();
+									mui.toast('注册成功，请登录')
+									mui.back();
+								}
+							},false,function(reg){
+								vm.waiting.close();
+								if(reg.message=='该手机号已注册'){
+									mui.back();
+								}
+								mui.toast(reg.message);
+							});
+						}
+					},
+					computed: {
+						isPhone: function() {
+							return this.myreg.test(this.phone) ? true : false;
+						},
+						isObtain: function() {
+							return this.onOff && this.isPhone ? true : false;
+						},
+						
+					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

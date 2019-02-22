@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/userdetails.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+	</head>
+
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">详细信息</div>
+		</header>
+		<div class="main" id="app" v-cloak>
+			<div class="user relative">
+				<div class="user-portrait fl">
+					<img :src="data.headpic" headpic/>
+				</div>
+				<div class="details">
+					<div class="name overflow">{{data.username}}</div>
+					<div class="phone relative">{{data.phone}}</div>
+					<div class="address relative overflow" v-if="data.address">{{data.address}}</div>
+				</div>
+				<button class="goshop absolute" v-if="data.shopid" @tap="openWindow('../../module/shopindex.html?id='+data.shopid,'shopindex.html')">进店</button>
+			</div>
+			<ul v-if="data.isfriend==2">
+				<li class="list" @tap="openWindow('remarks.html?id='+data.userid+'&name='+data.username,'remarks.html')">
+					<i class="iconfont icon-remark fl"></i>设置备注
+				</li>
+				<li class="list" @tap="delmsg">
+					<i class="iconfont icon-lajitong fl"></i>清空聊天记录
+				</li>
+				<li v-bind:class="[{'grouping-active':isShow},'list grouping relative']" @tap="isShow=!isShow">
+					<i v-bind:class="[,'iconfont icon-jiedianhuiyuanfenzu fl']"></i>
+					选择分组
+				</li>
+				<ul class="grouping-box" v-if="isShow">
+					<li v-bind:class="[{'checkbox-active':data.group==1},'list relative']" @tap='editFriendGroup(1)'>普通买主</li>
+					<li v-bind:class="[{'checkbox-active':data.group==2},'list relative']" @tap='editFriendGroup(2)'>批发买主</li>
+					<li v-bind:class="[{'checkbox-active':data.group==3},'list relative']" @tap='editFriendGroup(3)'>装包买主</li>
+				</ul>
+				<li class="list" @tap='delFriend'>
+					<i class="iconfont icon-heimingdan fl"></i>删除好友
+				</li>
+				<li class="list checkbox relative" v-if="data.isshoper">
+					<img src="../../img/icon/20190213141247.png"/>允许延期付款
+					<div class="switch-row fr">
+						{{data.usertype==2?'开':'关'}}
+						<div v-bind:class="[{'switch-active':data.usertype==2},'switch absolute translateY']" @tap="toggle">
+							<div class="switch-handle absolute translateY"></div>
+						</div>
+					</div>
+					
+				</li>
+			</ul>
+			
+			<button class="add-user" v-if="data.isfriend==1" @tap="openWindow('addcode.html?id='+data.userid,'addcode.html')">
+				添加好友
+			</button>
+			<button class="add-user" v-if="data.isfriend==2&&ismessage!='2'" @tap="openWindow('message.html?id='+data.userid)">
+				发送消息
+			</button>
+			<button class="add-user" v-if="data.isfriend==4" @tap="openWindow('code_friend_application.html?id='+data.userid,'application.html')">
+				同意
+			</button>
+			<div class="tag" v-if="data.usertype==2">
+				注：{{data.protocol}}
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../js/rongyun.js"></script>
+		<script type="text/javascript" src="../js/getmsg.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				window.addEventListener('refresh', function(e) {
+					pullfresh(); //返回刷新
+				});
+				mui.init({
+					beforeback: function() {　　　　
+						var list = plus.webview.currentWebview().opener(); //获得父页面的webview 	　　　　
+						mui.fire(list, 'refresh'); //触发父页面的自定义事件(refresh),从而进行刷新	
+						return true; //返回true,继续页面关闭逻辑
+					}
+				});
+				var vm = new Vue({
+					el: "#app",
+					data: {
+						data: '',
+						isShow: false,
+						ismessage: yh.getQueryString('msg') || '',
+						webview: plus.webview.getWebviewById('module/shat.html'),
+						ischeckbox:false,
+					},
+					mounted: function() {
+						mui('.user').on('tap', 'img[headpic]', function() {
+							var images = [].slice.call(document.querySelectorAll('.main img[msg]'));
+							var urls = [];
+							urls.push(vm.data.headpic);
+							var index = images.indexOf(this);
+							plus.nativeUI.previewImage(urls, {
+								current: index,
+								loop: false,
+								indicator: 'number'
+							});
+						});
+						getConnect(plus.storage.getItem('rytoken'), function() {});
+					},
+					methods: {
+						toggle:function(){
+							var type=vm.data.usertype==1?2:1;
+							vm.data.usertype=type;
+							yh.ajax({
+								url: "/setUserType",
+								data: {
+									userid: yh.getQueryString('id'),
+									usertype:type,
+								},
+								type: "POST",
+								fn: function(data) {}
+							}, true,function(){
+								mui.toast('设置失败');
+								vm.data.usertype=vm.data.usertype==1?2:1;
+							})
+						},
+						editFriendGroup: function(group) { //分组
+							if(vm.data.group == group) return;
+							yh.ajax({
+								url: "/editFriendGroup",
+								data: {
+									userid: yh.getQueryString('id'),
+									group: group
+								},
+								type: "POST",
+								fn: function(data) {
+									vm.data.group = group;
+									mui.toast('操作成功');
+								}
+							}, true)
+						},
+						delmsg: function() {
+							mui.confirm('提示', '你确定要删除聊天记录吗？', ['否', '是'], function(e) {
+								if(e.index == 1) {
+									//									vm.webview.evalJS("delmsglist(" + yh.getQueryString('id') + ")");
+									var targetId = yh.getQueryString('id').toString();
+									console.log(targetId);
+									RongIMLib.RongIMClient.getInstance().getHistoryMessages(1, targetId, null, 2, {
+										onSuccess: function(list, hasMsg) {
+											console.log(list.length)
+											if(list.length == 0) {
+												mui.toast("没有可删除的聊天记录");
+												return;
+											}
+											var params = {
+												conversationType: RongIMLib.ConversationType.PRIVATE, // 会话类型
+												targetId: targetId, // 目标 Id
+												timestamp: list[list.length-1].sentTime // 清除时间点
+											};
+											RongIMLib.RongIMClient.getInstance().clearRemoteHistoryMessages(params, {
+												onSuccess: function() {
+													mui.toast("操作成功")
+												},
+												onError: function(error) {
+													console.log(error);
+												}
+											});
+										},
+										onError: function(error) {
+											mui.toast("获取聊天记录失败");
+										}
+									});
+								}
+							})
+						},
+						delFriend: function() { //删除好友
+							mui.confirm('提示', '你确定要删除好友吗？', ['否', '是'], function(e) {
+								if(e.index == 1) {
+									yh.ajax({
+										url: "/delFriend",
+										data: {
+											userid: vm.data.userid,
+										},
+										type: "POST",
+										fn: function(data) {
+											vm.data.isfriend = 1;
+											vm.webview.evalJS("delFriend(" + yh.getQueryString('id') + ")");
+										}
+									}, true)
+								}
+							})
+
+						},
+						openWindow: function(url, id) {
+							mui.openWindow(url, id, {
+								styles: {
+									popGesture: "close",
+									background: '#FFFFFF',
+								},
+							});
+						},
+					},
+				});
+
+				function pullfresh() {
+					yh.ajax({
+						url: "/friendInfo",
+						data: {
+							userid: yh.getQueryString('id'),
+						},
+						type: "get",
+						fn: function(data) {
+							vm.data = data;
+						}
+					}, true)
+				};
+				pullfresh();
+
+			})
+		</script>
+	</body>
+
+</html>

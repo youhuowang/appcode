@@ -1,0 +1,72 @@
+.header{
+	width: 100vw;
+	height: 0.46rem;
+	line-height: 0.46rem;
+	top: 0;	
+	color: rgba(0,0,0,1);
+	z-index: 9;
+	background: rgba(0,0,0,0);
+}
+
+.mui-action-back{
+	padding:0 0.16rem;
+	font-size: 0.2rem;
+}
+.header-title{
+	height: 100%;
+	left: 0.5rem;
+	right: 0.5rem;
+	text-align: center;
+	font-size: 0.18rem;
+}
+.main{
+	padding-top:0;
+}
+.main-bg{
+	width: 100vw;
+	height: 3.25rem;
+	background: url(../img/main.bg.png)no-repeat;
+	background-size: 100% 100%;
+}
+.sider{
+	padding-top: 0;
+	margin-top: -.8rem !important;
+}
+.swiper-slide{
+	width: 100%;
+}
+.swiper-slide img{
+	display: block;
+	margin: 0 auto;
+	width: 2rem;
+	height: 2rem;
+}
+.boox{
+	padding: 0 0.1rem !important;
+}
+.boox-list{
+	height: 1rem;
+	padding:0.1rem;
+	margin-bottom: .1rem;
+	border-radius: 0.1rem;
+}
+.boox-list-goodscover {
+	margin-left: .9rem;
+	height: 100%;
+}
+.boox-list .img {
+	width: .8rem;
+	height: .8rem;
+	margin-right: 0.1rem;
+}
+.collection{
+	bottom: 0;
+}
+.boox-list-goodscover .collection {
+	top: .5rem;
+	right: 0;
+	font-size: 0.3rem;
+}
+.mui-scroll-wrapper {
+	top: 0 !important;
+}

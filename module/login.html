@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/register.css" />
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<div class="back mui-action-back">
+				<i class="iconfont icon-back"></i> 返回
+			</div>
+			<div class="form">
+				<div v-bind:class="[{color:!onOff},'title']">
+					{{title}}
+				</div>
+				<div class="input-row relative">
+					<input type="number" class="absolute" v-model="phone" :placeholder="tips"/>
+				</div>
+				<div class="input-row relative" v-show="onOff">
+					<input type="password" class="absolute" v-model="password" placeholder="密码："/>
+				</div>
+				<div class="input-row relative" v-show="!onOff">
+					<input type="number"class="absolute" v-model="code"/>
+					<div class="get-code translateY absolute" @tap="obtainCode">{{codeText}}</div>
+				</div>
+				<div class="send relative" @tap="login">
+					登录
+				</div>
+				<div class="explain tag">
+					<a href="register.html" reg class="fl">新用户注册</a>
+					<div class="fr" @tap="toggleLog">{{mode}}</div>
+				</div>				
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript" src="../js/login.js"></script>
+	</body>
+
+</html>

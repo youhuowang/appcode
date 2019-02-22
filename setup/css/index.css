@@ -1,0 +1,58 @@
+.header {
+	width: 100vw;
+	height: 0.46rem;
+	line-height: .46rem;
+	color: #5B5B5B;
+	top: 0;
+	z-index: 10;
+	font-size: 0.18rem;
+	background: #FFFFFF;
+}
+.header .mui-action-back {
+	padding-left: 0.2rem;
+	font-size: 0.16rem;
+}
+.header .title {
+	position: absolute;
+	height: 100%;
+	left: 0.5rem;
+	right: 0.5rem;
+	text-align: center;
+}
+.main{
+	padding-top: .56rem;
+}
+.box{
+	margin-bottom: 0.1rem;
+}
+.list{
+	height: 0.43rem;
+	line-height: .43rem;
+	background: #FFFFFF;
+	padding: 0 0.2rem;
+	color: #1E1E1E;
+	font-size: 0.16rem;
+	margin-bottom: 1px;
+}
+.switch{
+	width: 0.54rem;
+	height: 0.21rem;
+	top: 50%;
+	right: 0.2rem;
+	background: #AFAFAF;
+	border-radius: 0.32rem;
+}
+.switch .switch-handle{
+	top: 50%;
+	left: 0.01rem;
+	width: 0.19rem;
+	height: 0.19rem;
+	border-radius: 100%;
+	background: #FFFFFF;
+}
+.switch-active{
+	background: #4CD964;
+}
+.switch-active .switch-handle{
+	left: 0.34rem;
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<!--<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />-->
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../css/order_details.css" />
+		<link rel="stylesheet" type="text/css" href="../css/order_query.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<div class="content-head">
+						<div class="table">
+							<div class="table-cell">
+								<div class="orde-time content-head-list">
+									<div class="fl">订单时间:</div>
+									<div class="button-row fl btn relative" @tap.stop="toggletime($event)">{{starttime}}</div>
+									<div class="fl Link-character">到</div>
+									<div class="button-row fl btn relative" @tap="toggletime($event,true)">{{endtime}}</div>
+								</div>
+								<div class="orde-state content-head-list">
+									<div class="fl">订单状态:</div>
+									<div class="button-row fl label relative">
+										<div :class="[{'btn-active':onOff},'label-active btn']" @tap='onOff=!onOff'>{{orderstatusval}}</div>
+										<ul :class="[{none:!onOff},'label-content absolute']">
+											<li class="label-list" v-for="item in status" @touchstart='preventDefault($event)' @tap.stop='isorderstatus(item,$event)'>{{item}}</li>
+										</ul>
+									</div>
+									<div class="fl Link-character link-icon relative"></div>
+									<div class="button-row fl query" @tap="query">查询</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tag" v-if="info.length==0&&tag">
+						没有相关订单
+					</div>
+					<div class="shop" v-for="item in info" v-if="item.orderstatus!=6">
+						<div class="shop-title">
+							<div class="fl name" @tap="goShop(item.shopid)">
+								<i class="iconfont icon-zhengliicon-13"></i> {{item.shopname}}
+							</div>
+							<div class="fr" v-if="entrytype==1&&item.userid!=0" @tap='sendmessage(item.userid)'>
+								<i class="iconfont icon-youixn"></i> 联系卖家
+							</div>
+						</div>
+						<ul class="godds">
+							<li class="godds-list" v-for="list in item.goodslist" @tap="goDetails(list)">
+								<div class="fl img">
+									<img :src="list.goodscover" />
+								</div>
+								<div class="godds-list-details relative">
+									<div class="name overflow">{{list.title}}</div>
+									<div class="size overflow">{{list.spec}}</div>
+									<div class="price absolute">
+										<div class="fl">
+											¥ {{list.price}}
+										</div>
+										<div class="fr">
+											x {{list.num}}
+										</div>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<div class="price-row">订单金额：<span>¥ {{item.totalprice}}</span> &nbsp;&nbsp;&nbsp;已付金额：<span>¥ {{item.haspay}}</span>
+							<span class="fr">{{item.paytype==0?'未支付':item.paytype==1?'支付宝支付':item.paytype==2?'微信支付':'延期付款'}}</span>
+						</div>
+						<div class="shop-button">
+							<!--paytype//支付方式 0：未支付 1：支付宝支付 2：微信支付 3：延期付款未付完 4：延期付款已付完-->
+							<!--"orderstatus": "1",//订单状态 0：未付款 1：未发货 2：已发货 3：已完成-->
+							<div class="shop-button-list" @tap="goOrderDetails(item)">
+								查看详情
+							</div>
+							<div class="shop-button-list" v-if="(item.paytype==0||item.paytype==3)&&(item.orderstatus!=2&&item.orderstatus!=3)" @tap="delOrder(item)">
+								取消订单
+							</div>
+							<div class="shop-button-list shop-button-active" v-if="entrytype==1&&item.paytype==0&&item.orderstatus!=5" @tap="gopay(item.orderid)">
+								立即付款
+							</div>
+							<div class="shop-button-list" v-if="item.orderstatus==5">
+								订单已过期
+							</div>
+							<div class="shop-button-list" v-if="entrytype==2&&item.paytype==0">
+								买家未付款
+							</div>
+							<div class="shop-button-list shop-button-active" v-if="entrytype==1&&item.orderstatus==1" @tap="remindSendGoods(item.orderid)">
+								提醒发货
+							</div>
+							<div class="shop-button-list shop-button-active" v-if="entrytype==2&&item.orderstatus==1" @tap="ConfirmSend(item)">
+								确认发货
+							</div>
+							<div class="shop-button-list shop-button-active" v-if="entrytype==2&&item.orderstatus==2">
+								待收货<!-- orderstatus-->
+							</div>
+							<div class="shop-button-list shop-button-active" v-if="entrytype==1&&item.orderstatus==2" @tap="ConfirmCollect(item)">
+								确认收货
+							</div>
+							<div class="shop-button-list shop-button-active" v-if="entrytype==1&&(item.paytype==3||item.paytype==5)" @tap="ContinuePay(item.orderid)">
+								继续付款
+							</div>
+							<div class="shop-button-list shop-button-active" v-if="entrytype==2&&(item.paytype==3||item.paytype==5)">
+								未付完
+							</div>
+							<div class="shop-button-list" v-if="item.orderstatus==3&&(item.paytype!=3&&item.paytype!=5)">
+								交易完成
+							</div>						
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/order_query.js"></script>
+	</body>
+
+</html>

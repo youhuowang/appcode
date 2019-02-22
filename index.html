@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>优货网</title>
+		<link href="css/index.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="fonts/iconfont.css">
+		<link rel="stylesheet" type="text/css" href="css/app.css" />
+	</head>
+
+	<body>
+		<nav class="mui-bar mui-bar-tab bg fixed" id="nav_bottom">
+			<div class="table fl">
+				<a class="mui-tab-item active table-cell" href="main.html" id="sdefaultTab">
+					<p class="iconfont icon-youhuo1"> </p>
+					<p class="mui-tab-label">优货</p>
+				</a>
+			</div>
+			<div class="table fl">
+				<a class="mui-tab-item table-cell" href="module/shat.html">
+					<p class="iconfont">
+						<span class="iconfont icon-youixn relative" id="msg"></span>
+					</p>
+					<p class="mui-tab-label">优信</p>
+				</a>
+			</div>
+			<div class="table fl">
+				<a class="mui-tab-item table-cell" href="module/follow.html">
+					<p class="iconfont icon-guanzhu"> </p>
+					<p class="mui-tab-label">关注</p>
+				</a>
+			</div>
+			<div class="table fl">
+				<a class="mui-tab-item table-cell" href="module/personal.html">
+					<p class="iconfont icon-wode"> </p>
+					<p class="mui-tab-label">我的</p>
+				</a>
+			</div>
+		</nav>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var getmsginll=null;
+			mui.plusReady(function() {				
+				var pages = ['main.html', 'module/shat.html', '_www/module/follow.html', '_www/module/personal.html'];
+				var arr = document.getElementsByClassName("mui-tab-item");
+				var styles = {
+					top: "0",
+					bottom:"51px",
+					scrollIndicator:'none',
+				};
+				getmsginll=function(){
+					list[1].page=page = plus.webview.create(pages[1], pages[1], styles);
+				};
+				if(mui.os.ios&&plus.navigator.hasNotchInScreen()){styles.bottom='85px';};
+				var index=5;
+				var activeTab;
+				var list=[];
+				var slef = plus.webview.currentWebview();
+				for(var i = 0; i < arr.length; i++) { // 有几个选项卡，需要创建几个子页面
+					list.push({
+						'id':pages[i],
+						'page':1
+					});
+					!function(i) {						
+						arr[i].addEventListener("tap", function() { // 让当前页面(i)显示，不是当前页面隐藏
+							toggle(i)
+						});
+						if(i==1&&plus.storage.getItem('token'))getmsginll();
+					}(i);
+				}
+				
+				function toggle(n){
+					if(n==index)return;			
+					if(n!=0&&!plus.storage.getItem('token')){								
+						mui.openWindow('_www/module/login.html', 'login.htm', {
+							styles: {
+								popGesture: "none",
+								animationOptimization:'fade-in',
+								background:'#FFFFFF',
+							},
+						});								
+						return;
+					}							
+					if(index!=5){
+						arr[index].classList.remove("active");
+						plus.webview.getWebviewById(list[index].id).hide();
+						// plus.webview.hide(list[index].id, 'none','500');
+						var view=plus.webview.getWebviewById(list[n].id);
+						if(n!=1){
+							
+							mui.fire(view,'refresh');
+						}
+						 
+					}
+					arr[n].classList.add("active");			
+					
+					if(list[n].page!=1){
+						view.show();
+//						plus.webview.show(list[n].id, 'none','0');
+					}else{									
+						list[n].page=page = plus.webview.create(pages[n], pages[n], styles);
+						plus.webview.show(list[n].id, 'none','0');//slef.append(page); 当前页面首次显示
+					}	
+					index=n;
+					return;
+				}
+				mui.trigger(arr[0], "tap");//首次显示
+				window.addEventListener('refresh', function(e) {
+					var n=e.detail.index;
+					var view=plus.webview.getWebviewById(list[n].id);
+					mui.fire(view,'refresh'); 
+					toggle(n);
+					plus.webview.show(list[n].id, 'none','0');
+				});
+				plus.push.addEventListener( "click", function ( msg ) {
+					if(index==1)return;
+					var webview = plus.webview.getWebviewById(plus.runtime.appid);
+					if(webview) {
+						webview.show();
+					}
+					toggle(1);
+				}, false ); 				
+			});		
+
+			function showmessage(num){
+				num>0?$('#msg').addClass('msg'):$("#msg").removeClass("msg");				
+			}
+			function msgint(){
+				getmsginll();
+			}
+		</script>
+		<!-- <script type="text/javascript" charset="utf-8">
+			mui.plusReady(function() {				
+				var pages = ['main.html', 'module/information.html', 'module/follow.html', 'module/personal.html'];
+				var arr = document.getElementsByClassName("mui-tab-item");
+				var styles = {
+					top: "0",
+					bottom: "51px"
+				};
+				if(mui.os.ios){styles.bottom='85px';};
+				var webview=null,
+				index=0;
+				for(var i = 0; i < arr.length; i++) {
+					!function(i) {						
+						arr[i].addEventListener("tap", function() { // 让当前页面(i)显示，不是当前页面关闭	
+							if(index==i)return;
+							if(i!=0&&!plus.storage.getItem('token')){								
+								mui.openWindow('module/login.html', 'login.htm', {
+									styles: {
+										popGesture: "none",
+										animationOptimization:'fade-in',
+									},
+								});								
+								return;
+							}
+							arr[index].classList.remove("active")
+							arr[i].classList.add("active");
+							index=i;
+							if(webview)plus.webview.close( webview.id, 'none', 0);
+							webview=plus.webview.create(pages[i], pages[i], styles);
+							webview.show();
+							return;
+						})
+					}(i);
+				}
+				mui.trigger(arr[0], "tap");//首次显示
+				window.addEventListener('refresh', function(e) {
+					var n;
+					if(e.detail.index>=0){n=e.detail.index}else{return};
+					mui.trigger(arr[n], "tap");
+				});
+			});			
+		</script> -->
+	</body>
+
+</html>

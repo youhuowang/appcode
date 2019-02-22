@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/under_pay.css" />
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<header class="header fixed">
+				<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+				<div class="title">延期付款</div>
+			</header>
+			<div class="main">
+				<div class="list">
+					<div class="name fl">
+						订单总额：
+					</div>
+					<div class="input-row">
+						¥ {{data.totalprice}}
+					</div>
+				</div>
+				<div class="list">
+					<div class="name fl">
+						付款金额：
+					</div>
+					<div class="input-row">
+						<!--<input type="number"  v-model="price" />-->
+						0.00
+					</div>
+				</div>
+				<div class="list">
+					<div class="name fl">
+						订单备注：
+					</div>
+					<div class="input-row">
+						<input type="text" v-model="content" maxlength="200" />
+					</div>
+				</div>
+				<!--<div class="tips">
+					注：{{data.protocol}}
+				</div>-->
+				<button :class="[{'send-active':!onOff},'button fixed translateX']" @click="send">
+					提交
+				</button>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var vm = new Vue({
+					el: "#app",
+					data: {
+						data: '',
+						content: '',
+						onOff: true,
+					},
+					methods: {
+						send: function() {
+							if(this.onOff) {
+								this.onOff = false;
+								yh.ajax({
+									url: "/ConfirmUnlinePay",
+									data: {
+										orderid: yh.getQueryString('id'),
+										content: vm.content,
+									},
+									type: "POST",
+									fn: function(data) {
+										location.href = 'paySuccessCB.html?id=' + data;
+									}
+								}, true,function(reg){
+									if(reg)mui.toast(reg.message);
+									vm.onOff = true;
+								});
+							}
+						}
+					},
+				})
+				yh.ajax({
+					url: "/unlinePay",
+					data: {
+						orderid: yh.getQueryString('id'),
+					},
+					type: "POST",
+					fn: function(data) {
+						vm.data = data;
+					}
+				}, true);
+			})
+		</script>
+	</body>
+
+</html>

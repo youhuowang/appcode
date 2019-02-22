@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/shopFansList.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back iconfont icon-back"></div>
+		</header>
+		<div class="mui-content" id="app" v-cloak>
+			
+			<div id="pullRefresh" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<div class="head relative">
+						<div class="head-bg absolute">
+							<img class="absolute translateY" :src="headpic" />
+						</div>
+						<div class="head-box absolute">
+							<div class="fl table-row table">
+								<div class="table-cell">
+									<div class="num relative">
+										{{follownum}}
+										<div class="tag absolute translateX">粉丝数</div>
+									</div>
+								</div>
+							</div>
+							<div class="fr table-row table">
+								<div class="table-cell">
+									<div class="num relative">
+										{{friendsnum}}
+										<div class="tag absolute translateX">观看数</div>
+									</div>
+								</div>
+							</div>
+							<div class="portrait table">
+								<div class="table-cell">
+									<img :src="headpic" v-if="headpic"/>
+								</div>
+							</div>
+						</div>
+					</div>
+					<ul class="list-box">
+						<li class="list" v-for="item in userlist">
+							<div class="fl">
+								<img :src="item.headpic||'../img/icon/portrait.png'" />{{item.nikename}}
+							</div>
+							<div class="fr">
+								<button v-bind:class="{'color':item.isfriend==2}" @tap="addFriend(item)">{{item.isfriend==1?'添加好友':'已是好友'}}</button>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+		</div>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var vm = new Vue({
+					el: '#app',
+					data: {
+						page: 0,
+						userlist: [],
+						follownum:'',
+						friendsnum:'',
+						headpic:'',
+					},
+					methods: {						
+						delFollowShop: function(item) {
+							yh.ajax({
+								url: "/delFollowShop",
+								data: {
+									shopid: item.id,
+								},
+								type: "post",
+								fn: function(data) {
+									vm.data.splice(item, 1)
+								}
+							})
+						},
+						addFriend: function(item) {
+							if(item.isfriend==2)return;
+							var uid=item.id;
+							mui.openWindow('_www/chat/html/userdetails.html?id=' + uid, 'userdetails.html', {
+								styles: {
+									popGesture: "close",
+									background: '#FFFFFF',
+								},
+							});
+						},
+					},
+				});
+				mui.init({
+					pullRefresh: {
+						container: '#pullRefresh',
+						down: {
+							style: 'circle',
+							callback: pulldownRefresh
+						},
+						up: {
+							auto: true,
+							contentnomore: '没有更多数据了',
+							callback: pullupRefresh
+						}
+					}
+				});
+
+				function pulldownRefresh() {
+					vm.userlist = [];
+					vm.page = 0;
+					pullupRefresh();
+					mui('#pullRefresh').pullRefresh().endPulldown();
+				};
+
+				function pullupRefresh() {
+					var $this = this;
+					vm.page++;
+					yh.ajax({
+						url: "/shopFansList",
+						data: {
+							page: vm.page,
+							num: 20,
+						},
+						type: "GET",
+						fn: function(data) {
+							for(var i = 0; i < data.userlist.length; i++) {
+								vm.userlist.push(data.userlist[i]);
+							}
+							if(vm.page==1){
+								vm.follownum=data.follownum;
+								vm.friendsnum=data.friendsnum;
+								vm.headpic=data.headpic;
+							}
+							$this.endPullupToRefresh(data.userlist.length < 20);
+						}
+					})
+				}
+			})
+		</script>
+	</body>
+
+</html>

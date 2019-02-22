@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/detailed.css"/>
+	</head>
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">明细</div>
+		</header>
+		<div id="app" class="main" v-cloak>			
+	   		<ul class="detailed" v-for="item in data">
+	   			<div class="detailed-time">
+	   				<div class="table">
+	   					<div class="table-cell">
+		   					<div class="time">
+			   					{{item.data}}
+			   				</div>
+			   				<div class="price">提现 ¥{{item.expenditure}}  收入 ¥{{item.income}}</div>
+		   				</div>		
+	   				</div>			   					   				
+	   			</div>
+	   			<li class="detailed-list" v-for="list in item.list">
+	   				<div class="table">
+	   					<div class="table-cell">
+	   						<p>订单编号：{{list.orderno}}<span class="fr price">{{list.amount}}</span></p>
+	   						<p>{{list.addtime}}<span class="fr status">{{list.title}}</span></p>
+	   					</div>			   					
+	   				</div>
+	   				<!--<div class="table fr">
+	   					<div class="table-cell">
+	   						<div class="price">{{list.amount}}</div>
+	   						<div class="status">{{list.title}}</div>
+	   					</div>			   					
+	   				</div>-->
+	   			</li>
+	   		</ul>
+	   		<div class="tag" v-if="data==''">
+	   			你还没有相关记录
+	   		</div>
+		</div>	
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function(){
+				var vm=new Vue({
+					el:"#app",
+					data:{
+						data:null,
+					}					
+				})
+				yh.ajax({
+					url: "/availablebalanceDateil",
+					type: "get",
+					fn: function(data) {
+						vm.data=data;
+					}
+				});
+			})
+		</script>
+	</body>
+</html>

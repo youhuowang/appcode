@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/swiper.css" />
+		<style type="text/css">
+			.swiper-container {
+			    width: 600px;
+			    height: 300px;
+			    line-height: 300px;
+			    text-align: center;
+			    font-size: 16px;
+			}  
+		</style>
+	</head>
+
+	<body>
+		<div class="swiper-container">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide">Slide 1</div>
+				<div class="swiper-slide">Slide 2</div>
+				<div class="swiper-slide">Slide 3</div>
+			</div>
+			<div class="swiper-pagination"></div>
+		</div>
+		<script type="text/javascript" src="../js/swiper.min.js">
+		</script>
+		<script type="text/javascript">
+			window.onload=function(){
+				var mySwiper = new Swiper(".swiper-container", {
+					pagination: {
+						el: '.swiper-pagination',
+//						bulletElement: 'div',
+					},
+					on: {
+						tap: function(e) {
+							console.log(e);
+							this.slides.eq(mySwiper.activeIndex).attr('addid', 1)
+							console.log(mySwiper.activeIndex)
+							console.log(this.slides[mySwiper.activeIndex])
+							
+						},
+					},
+//					loop: true, //启动自动切换
+//					loopAdditionalSlides: 1, //启动自动切换 前后各加一张图片
+//					autoplay: {
+//						delay: 5000, //5秒切换一次
+//						disableOnInteraction: false, //开启用户点击后自动启动
+//					},
+				})
+			}
+			
+		</script>
+	</body>
+
+</html>

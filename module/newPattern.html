@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/swiper.css" />
+		<link rel="stylesheet" type="text/css" href="../css/pattern.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<header class="header fixed mui-bar-transparent">
+				<div class="fl mui-action-back iconfont icon-back"></div>
+				<!--<div class="header-title absolute">出行必备</div>-->
+				<div class="fr iconfont icon-youixn" @tap="messagelist"></div>
+			</header>
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<div class="head-bg"></div>
+					<div class="carousel">
+						<div class="title relative">
+							入季新款
+						</div>
+						<ul class="carousel-box">
+							<li class="carousel-list relative" v-for="item in carousel" @tap="godetails(item.id)">
+								<img :src="item.goodscover" />
+							</li>
+						</ul>
+					</div>
+					<ul class="boox">
+						<li class="boox-list" v-for="(item,index) in list" @tap="godetails(item.id)">
+							<div class="fl">
+								<img class="img" :src="item.goodscover" />
+							</div>
+							<div class="boox-list-goodscover relative">
+								<div class="title textOver">{{item.title}}</div>
+								<div class="price absolute">¥ {{item.price}}</div>
+								<div v-bind:class="[{active:item.collect==2},'iconfont collection icon-shoucang absolute']" @tap.stop="toggleGoods(item)"></div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!--<div class="main">
+				
+				<div class="pullupRefresh">{{tag}}</div>
+			</div>-->
+			<script type="text/javascript" src="../js/mui.js"></script>
+			<script type="text/javascript" src="../js/swiper.min.js"></script>
+			<script type="text/javascript" src="../js/Vue.js"></script>
+			<script type="text/javascript" src="../js/aes.js"></script>
+			<script type="text/javascript" src="../js/app.js"></script>
+			<script type="text/javascript" src="../js/jquery.js"></script>
+			<script type="text/javascript">
+				mui.plusReady(function() {
+					var vm = new Vue({
+						el: '#app',
+						data: {
+							page: 0,
+							istop: true,
+							sider: '',
+							carousel: '',
+							list: [],
+							tag: '上拉加载更多',
+						},
+						methods: {
+							godetails: function(id) {
+								location.href = 'details.html?id=' + id;
+							},
+							toggleGoods: function(item) { //收藏切换
+								var url = item.collect == 1 ? "/collectGoods" : '/delCollectGoods';
+								yh.ajax({
+									url: url,
+									data: {
+										'goodsid': item.id,
+									},
+									type: "post",
+									fn: function(data) {
+										item.collect = item.collect == 1 ? 2 : 1;
+									}
+								}, true);
+							},
+							messagelist: function() {
+								yh.messagelist();
+							},
+						},
+					})
+					mui.init({ //上拉加载 下拉刷新		
+						pullRefresh: {
+							container: '#pullrefresh',
+							up: {
+								auto: true,
+								contentrefresh: '正在加载...',
+								callback: pullupRefresh,
+							}
+						}
+					});
+//					var onOff = true;
+//					plus.navigator.setStatusBarStyle('dark');
+//					pullupRefresh();
+//
+					function pullupRefresh() {
+						var $this=this;
+						vm.page++;
+						yh.ajax({
+							url: '/activity',
+							data: {
+								actid: yh.getQueryString('id'),
+								page: vm.page,
+								num: 15,
+							},
+							type: "get",
+							fn: function(data) {
+								if(vm.page == 1) vm.carousel = data.carousel;
+								data.list.forEach(function(value, i) {　
+									vm.list.push(value);
+								})
+								$this.endPullupToRefresh(data.list.length < 15);
+							}
+						});
+					}
+//					window.onload = function() {
+//						pullupRefresh();
+//					}
+//					$("body").on('touchmove', function(e) {
+//						var t = document.documentElement.scrollTop || document.body.scrollTop;
+//						var h = document.querySelector(".main").offsetHeight - $(window).height();
+//						if(h == t) {
+//							pullupRefresh();
+//						}
+//					})
+				})
+			</script>
+
+	</body>
+
+</html>

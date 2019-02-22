@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/information.css" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<div class="header relative fixed">
+				<div class="title absolute">优信</div>
+				<a link href="../chat/html/friends.html" v-bind:class="[{addFriend:addFriend==1},'header-bars fr iconfont icon-lianxiren relative']"></a>
+			</div>
+			<ul class="main" id="OA_task_1">
+				<div class="search">
+					<div class="search-row">
+						<div class="search-row-icon iconfont icon-sousuo fl"></div>
+						<a link class="search-row-input" href="../chat/html/friends_search.html">
+							<!-- <form onsubmit="return false">
+								<input type="search" placeholder="搜索" />
+							</form> -->
+							搜索
+						</a>
+					</div>
+				</div>
+				<li class="mui-table-view-cell contacts-list table contacts" @tap="gomessage(system.senderUserId)" v-if="system">
+					<div class="mui-slider-right mui-disabled">
+						<a class="mui-btn mui-btn-red" @tap.stop="removemsg($event,system.senderUserId)">删除</a>
+					</div>
+					<div class="table-cell mui-slider-handle">
+						<div class="contacts-list-portrait fl">
+							<img src="../img/notice.png" />
+						</div>
+						<div class="contacts-list-con">
+							<div class="contacts-list-title">{{system.content.extra.name}}<span class="time fr">{{showTime(system.sentTime)}}</span></div>
+							<div class="contacts-list-news">
+								<div class="badge fr" v-if="system.num!=0">
+									<span class="mui-badge">{{system.num}}</span>
+								</div>
+								<div class="tag overflow">{{content(system)}}</div>
+							</div>
+						</div>
+					</div>
+				</li>
+				<li class="contacts-list table mui-table-view-cell" v-for="item in list" @tap="gomessage(item.senderUserId)" v-if="item.content.extra.id!='system'">
+					<div class="mui-slider-right mui-disabled">
+						<a class="mui-btn mui-btn-red" @tap.stop="removemsg($event,item.senderUserId)">删除</a>
+					</div>
+					<div class="table-cell mui-slider-handle">
+						<div class="contacts-list-portrait fl">
+							<img :src="item.content.extra.img" />
+						</div>
+						<div class="contacts-list-con">
+							<div class="contacts-list-title">{{item.content.extra.name}}<span class="time fr">{{showTime(item.sentTime)}}</span></div>
+							<div class="contacts-list-news">
+								<div class="badge fr" v-if="item.num!=0">
+									<span class="mui-badge">{{item.num}}</span>
+								</div>
+								<div class="tag overflow">{{content(item)}}</div>
+							</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../chat/js/rongyun.js"></script>
+		<script type="text/javascript" src="../js/getcontent.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				window.addEventListener('refresh', function(e) {
+					vm.getConnect(); //返回刷新
+					vm.addFriend=localStorage.getItem("addFriend");
+				});
+				if(plus.navigator.checkPermission('NOTIFITION')!='authorized'){
+					mui.alert("在系统设置里面开启通知后才能收到通知消息哦",'提示','确定');
+				}
+				var pause=false;
+				document.addEventListener("pause", function(){
+					pause=true;
+					console.log('切换到后台');
+				}, false);
+				document.addEventListener('resume', function () {
+					pause = false;
+					console.log('前台');
+				}, false);
+				var clickNum = 0;
+				mui.back = function(event) {
+					clickNum++;
+					clickNum > 1 ? plus.runtime.quit() : mui.toast("再按一次退出应用");
+					setTimeout(function() {
+						clickNum = 0
+					}, 2000);
+					return false;
+				}
+				var vm = new Vue({
+					el: "#app",
+					data: {
+						userid: plus.storage.getItem('userid'),
+						list: [],
+						system:'',
+						addFriend:localStorage.getItem("addFriend"),
+						webview: plus.webview.getWebviewById(plus.runtime.appid),
+						isplay:false,
+						player:'',
+						sentTime:0,
+					},
+					mounted: function() {
+						mui('body').on('tap', 'a[link]', function() {
+							var href = this.getAttribute('href');
+							var id = this.getAttribute("data-wid") || href;
+							if(id.indexOf("?") != -1) id = id.split("?")[0];
+							if(href && ~href.indexOf('.html')) mui.openWindow(href, id, {
+								styles: {
+									popGesture: "close"
+								},
+							});
+						});
+					},
+					methods: {
+						removemsg: function(e, id) {
+							var li = e.srcElement.parentNode.parentNode;
+							mui.confirm('确认删除该条记录？', '提示', ['确认', '取消'], function(e) {
+								if(e.index == 0) {
+									getFile({
+										url: "msg/" + vm.userid + ".txt",
+										fn: function(fileEntry) {
+											fileEntry.file(function(file) {
+												var reader = new plus.io.FileReader();
+												reader.onloadend = function(e) {
+													vm.list = eval('(' + e.target.result + ')');
+													for(var i = 0; i < vm.list.length; i++) {
+														if(vm.list[i].senderUserId == id) {
+															vm.list.splice(i, 1)
+														}
+													}
+												};
+												reader.readAsText(file);
+												fileEntry.createWriter(function(write) {
+													write.write(JSON.stringify(vm.list));
+													if(id == 'system') {vm.system = '';}
+													mui.toast("删除成功");
+												}, function(e) {
+													alert(e.message);
+												});
+											}, function(e) {
+												alert(e.message);
+											});
+										}
+									})
+									
+								} else {
+									setTimeout(function() {
+										mui.swipeoutClose(li);
+									}, 0);
+								}
+							});
+						},
+						gomessage: function(id) {
+							mui.openWindow('../chat/html/message.html?id=' + id, 'message.html', {
+								styles: {
+									popGesture: "close"
+								},
+							})
+						},
+						showTime: function(tim) {
+							return format(tim)
+						},
+						save: function(msg) {
+							if(msg.senderUserId == vm.userid || msg.senderUserId == plus.storage.getItem('senderUserId')){return};
+							if(pause){
+								plus.push.createMessage(msg.content.content,'',{
+									cover:true,
+									sound:"none",
+									title:msg.content.extra.name,
+								})
+							};
+							if(msg.content.extra.id == 'system'&&msg.content.content==1){
+								vm.addFriend=1;
+								vm.webview.evalJS("showmessage("+1+")")
+								localStorage.setItem("addFriend","1");
+								return;
+							}
+							getFile({
+								url: "msg/" + vm.userid + ".txt",
+								fn: function(fileEntry) {
+									fileEntry.file(function(file) {
+										var reader = new plus.io.FileReader();
+										reader.onloadend = function(e) {
+											var num = 1,numall=0;//numall统计未读消息总数
+											if(e.target.result != '') {
+												vm.list = eval('(' + e.target.result + ')');
+												for(var i = 0; i < vm.list.length; i++) {
+													if(vm.list[i].senderUserId == msg.senderUserId) {
+														if(msg.sentTime == vm.list[i].sentTime) return;
+														num = num > 99 ? '99+' : vm.list[i].num + 1;
+														vm.list.splice(i, 1)
+													}else{
+														numall=numall+vm.list[i].num;
+													}
+												}
+											}
+											msg.num = num;
+											numall=numall+num;	
+											if(msg.content.extra.id == 'system') {
+												vm.system = msg;
+											}
+											vm.list.unshift(msg);
+											vm.playAudio();
+											vm.webview.evalJS("showmessage("+numall+")");///更新nav上小圆点显示状态
+										};
+										reader.readAsText(file);
+										fileEntry.createWriter(function(write) {
+											write.write(JSON.stringify(vm.list));
+										}, function(e) {
+											alert(e.message);
+										});
+									}, function(e) {
+										alert(e.message);
+									});
+								}
+							})
+						},
+						
+						playAudio: function() { //语音播放
+							if(plus.device.getVolume()==0){
+								plus.device.vibrate(300);//播放失败时 震动
+								return;
+							}
+							if (vm.isplay)vm.player.stop();//播放中  停止重新开始
+							vm.player=plus.audio.createPlayer('../img/075888piCqB9.mp3');
+							vm.isplay = true;
+							vm.player.play(function() {
+								vm.isplay = false;
+							}, function(e) {
+								plus.device.vibrate(300);//播放失败时 震动
+							});
+						},
+						getConnect: function() {
+							getFile({
+								url: "msg/" + vm.userid + ".txt",
+								fn: function(fileEntry) {
+									fileEntry.file(function(file) {
+										var reader = new plus.io.FileReader();
+										var list = [],numall=0;
+										vm.list = [];
+										reader.onloadend = function(e) {
+											if(e.target.result != '') list = eval('(' + e.target.result + ')');
+											list.forEach(function(value, i) {
+												if(value.content.extra.id == 'system') {
+													vm.system = value;//好友申请
+												} else {
+													vm.list.push(value);//消息
+													numall=numall+value.num;
+												}
+											});
+											if(vm.addFriend==1)numall++;
+											vm.webview.evalJS("showmessage("+numall+")");///更新nav上小圆点显示状态
+										};
+										reader.readAsText(file);
+									}, function(e) {
+										alert(e.message);
+									});
+								}
+							})
+
+						},
+						content: function(msg) {
+							var type = msg.messageType;
+							var tag = msg.tag,
+								value;
+							if(type == 'TextMessage') {
+								value = msg.content.content;
+							} else if(type == 'VoiceMessage') {
+								value = tag ? '你发送了一条语音消息' : '你收到一条语音消息';
+							} else if(type == 'ImageMessage') {
+								value = tag ? '你发送了一张图片给对方' : '好友发来一张图片';
+							} else {
+								value = tag ? '你撤回了一条消息' : '对方撤回了一条消息';
+							}
+							return value;
+						}
+					},
+				});
+				vm.getConnect();
+				RongIMLib.RongIMClient.init("tdrvipkstxb85"); //初始化
+				getConnect(plus.storage.getItem('rytoken'), function(msg) {
+					if(msg.sentTime==vm.sentTime)return;
+					getFile({
+						url: "msg/" + vm.userid + "/" + msg.targetId + ".txt",
+						fn: function(fileEntry) {
+							fileEntry.file(function(file) {
+								var msgList = [];
+								var reader = new plus.io.FileReader();
+								reader.onloadend = function(e) {
+									if(e.target.result != '') msgList = eval('(' + e.target.result + ')');
+									if(msg.messageType == 'RecallCommandMessage') {
+										msgList.forEach(function(value, i) {
+											if(msg.content.messageUId == value.messageUId) {
+												msgList[i].messageType = 'RecallCommandMessage';
+											}
+										})
+									} else {
+										msgList.push(msg)
+									};
+									vm.save(msgList[msgList.length - 1]);
+								};
+
+								reader.readAsText(file);
+								fileEntry.createWriter(function(write) {
+									write.write(JSON.stringify(msgList));
+								}, function(e) {
+									alert(e.message);
+								});
+							}, function(e) {
+								alert(e.message);
+							});
+						}
+					});
+				});
+			})
+		</script>
+	</body>
+
+</html>

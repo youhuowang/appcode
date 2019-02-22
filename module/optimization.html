@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/swiper.css" />
+		<link rel="stylesheet" type="text/css" href="../css/file.css" />
+		<link rel="stylesheet" type="text/css" href="../css/optimization.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<header class="header fixed mui-bar-transparent">
+				<div class="fl mui-action-back iconfont icon-back"></div>
+				<!--<div class="header-title absolute">优选货</div>-->
+			</header>
+			<div class="main">
+				<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<div class="main-bg"></div>
+						<div class="sider">
+							<div class="swiper-container">
+								<div class="swiper-wrapper">
+									<div class="swiper-slide" v-for="item in carousel" :actid="item.id">
+										<img :src="item.goodscover" />
+									</div>
+								</div>
+								<div class="swiper-pagination"></div>
+							</div>
+						</div>
+						<ul class="boox">
+							<li class="boox-list" v-for="(item,index) in list" @tap="godetails(item.id)">
+								<div class="fl">
+									<img class="img" :src="item.goodscover" />
+								</div>
+								<div class="boox-list-goodscover relative">
+									<div class="title textOver">{{item.title}}</div>
+									<div class="price">¥ {{item.price}}</div>
+									<div v-bind:class="[{active:item.collect==2},'iconfont collection icon-shoucang absolute']" @tap.stop="toggleGoods(index,item.id,item.collect)"></div>
+									<!--<div class="active iconfont collection icon-shoucang absolute"></div>-->
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/swiper.min.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var w = document.body.offsetWidth,
+					s = w <= 320 ? 150 : w <= 375 ? 170 : w <= 414 ? 200 : '';
+				var vm = new Vue({
+					el: '#app',
+					data: {
+						page: 0,
+						istop: true,
+						sider: '',
+						carousel: '',
+						list: [],
+					},
+					methods: {
+						godetails: function(id) {
+//							location.href = 'details.html?id=' + id;
+							mui.openWindow('details.html?id=' + id, 'details.html', {
+								styles: {
+									popGesture: "none",
+									animationOptimization:'fade-in',
+									top:0,//子页面顶部位置
+       								bottom:0,//子页面底部位置
+       								background:'#FFFFFF',
+								},
+							});
+						},
+						toggleGoods: function(i, id, collect) { //收藏切换
+							var url = collect == 1 ? "/collectGoods" : '/delCollectGoods';
+							yh.ajax({
+								url: url,
+								data: {
+									'goodsid': id,
+								},
+								type: "post",
+								fn: function(data) {
+									vm.list[i].collect = collect == 1 ? 2 : 1;
+								}
+							}, true);
+						}
+					},
+					watch: {
+						carousel: function() {
+							this.$nextTick(function() {
+								vm.sider == '' ? vm.sider = new Swiper('.swiper-container', {
+									watchSlidesProgress: true, //计算进度
+									slidesPerView: 'auto',
+									centeredSlides: true, //居中
+									loop: true, //启动自动切换
+									slidesPerView: 2, //显示数量,
+									loopAdditionalSlides: 2, //启动自动切换 前后各加一张图片
+									autoplay: {
+										delay: 5000, //5秒切换一次
+										disableOnInteraction: false, //开启用户点击后自动启动
+									},
+									pagination: {
+										el: '.swiper-pagination',
+									},
+									on: {
+										progress: function(progress) {
+											for(i = 0; i < this.slides.length; i++) {
+												var slide = this.slides.eq(i);
+												var slideProgress = this.slides[i].progress;
+												modify = 1;
+												if(Math.abs(slideProgress) > 1) {
+													modify = (Math.abs(slideProgress) - 1) * 0.3 + 1;
+												}
+												translate = slideProgress * modify * s + 'px';
+												scale = 1 - Math.abs(slideProgress) / 3;
+												zIndex = 999 - Math.abs(Math.round(10 * slideProgress));
+												slide.transform('translateX(' + translate + ') scale(' + scale + ')');
+												slide.css('zIndex', zIndex);
+												slide.css('opacity', 1);
+												if(Math.abs(slideProgress) > 3) {
+													slide.css('opacity', 0);
+												}
+											}
+										},
+										tap: function(e) {
+											var id=this.slides.eq(this.activeIndex).attr('actid');
+											vm.godetails(id);
+										},
+										setTransition: function(transition) {
+											for(var i = 0; i < this.slides.length; i++) {
+												var slide = this.slides.eq(i)
+												slide.transition(transition);
+											}
+
+										}
+									}
+
+								}) : vm.sider.update();
+							})
+						}
+					}
+				})
+				mui.init({ //上拉加载 下拉刷新		
+					pullRefresh: {
+						container: '#pullrefresh',
+						up: {
+							auto: true,
+							contentrefresh: '正在加载...',
+							callback: pullupRefresh,
+						}
+					}
+				});
+				function pullupRefresh() {
+					var $this=this;
+					vm.page++;
+					yh.ajax({
+						url: '/activity',
+						data: {
+							actid: yh.getQueryString('id'),
+							page: vm.page,
+							num: 15,
+						},
+						type: "get",
+						fn: function(data) {
+							if(vm.page == 1) vm.carousel = data.carousel;
+							data.list.forEach(function(value, i) {　
+								vm.list.push(value);
+							})
+							$this.endPullupToRefresh(data.list.length < 15);
+//							mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.list.length < 15);
+						}
+					});
+				}
+			})
+		</script>
+	</body>
+
+</html>

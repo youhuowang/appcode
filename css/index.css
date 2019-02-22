@@ -1,0 +1,37 @@
+
+.mui-bar{
+	width: 100vw;
+	height: 50px;
+	bottom: 0;
+	background: rgba(255,255,255,1);	
+	z-index: 999999;
+}
+.mui-bar .table{
+	width: 25%;
+	height: 100%;
+}
+.mui-tab-item{
+	text-align: center;
+	color: #444444;
+}
+.mui-tab-item .iconfont{
+	font-size: 24px;
+}
+.mui-tab-label{
+	font-size: 10px;
+}
+.mui-bar-tab .active{
+   color: #F27428;
+   
+  }
+.msg:after{
+	content: '';
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: red;
+	position: absolute;
+	right:-4px;
+	top: 0;
+	margin-top: -4px;
+}

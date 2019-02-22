@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/follow.css" />
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<header class="header fixed">
+				<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+				<div class="title">收藏</div>
+			</header>
+			<div class="content">
+				<div id="pullRefresh" class="mui-content mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<div class="search">
+							<div class="input-row">
+								<div class="search-icon iconfont icon-sousuo fl"></div>
+								<div class="upsech fr" v-if="onOff" @tap="upsech">取消</div>
+								<div class="search-input">
+									<form onsubmit="return false">
+										<input type="search" @keyup.enter="followSearch" v-model="keyword" placeholder="输入店铺名称关键字" />
+									</form>
+								</div>
+							</div>
+						</div>
+						<ul class="collection">
+							<li class="collection-list" v-for="item in data" @click="godetails(item.id)" v-if="item.price">
+								<div class="img fl">
+									<img :src="item.goodscover" />
+								</div>
+								<div class="collection-list-con relative">
+									<div class="name overflow">{{item.title}}</div>   
+									<p class="model">黑:均码/4件</p>
+									<div class="collection-list-price absolute">
+										<div class="fl tag">¥ {{item.price}}</div>
+										<div class="addToCart fr" @click.stop="delCollectGoods(item)">
+											删除
+										</div>
+									</div>
+								</div>
+							</li>
+
+						</ul>
+
+					</div>    
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var vm = new Vue({
+					el: '#app',
+					data: {
+						onOff: false,
+						page: 0,
+						data: [],
+						keyword: '',
+					},
+					methods: {
+						followSearch: function() {//搜索
+							if(vm.keyword == '') return;
+							vm.data = [];
+							mui('#pullRefresh').pullRefresh().disablePullupToRefresh();
+							yh.ajax({
+								url: "/followSearch",
+								data: {
+									keyword: vm.keyword,
+									type: 2,
+								},
+								type: "GET",
+								fn: function(data) {
+									for(var i = 0; i < data.length; i++) {
+										vm.data.push(data[i]);
+									}
+									vm.onOff=true;
+								}
+							},true)
+						},
+						upsech:function(){
+							vm.onOff=false;
+							vm.keyword="",
+							pulldownRefresh();
+						},
+						delCollectGoods:function(item){//取消关注
+							yh.ajax({
+								url: "/delCollectGoods",
+								data: {
+									goodsid:item.id,
+								},
+								type: "post",
+								fn: function(data) {
+									item.price=null;
+									mui.toast('操作成功');
+								}
+							},true)
+						},
+						godetails:function(id){//商品详情
+							mui.openWindow('details.html?id='+id, "details.html", {
+								styles: {
+									popGesture: "close"
+								},
+							});
+						}
+					},
+				});
+				mui.init({
+					pullRefresh: {
+						container: '#pullRefresh',
+						down: {
+							style: 'circle',
+							callback: pulldownRefresh
+						},
+						up: {
+							auto: true,
+							contentnomore: '没有更多数据了',
+							callback: pullupRefresh
+						}
+					}
+				});
+
+				function pulldownRefresh() {
+					vm.data = [];
+					vm.page = 0;
+					pullupRefresh();
+					mui('#pullRefresh').pullRefresh().endPulldown();
+				};
+
+				function pullupRefresh() {
+					var $this = this;
+					vm.page++;
+					yh.ajax({
+						url: "/collectGoodsList",
+						data: {
+							page: vm.page,
+							num: 20,
+						},
+						type: "GET",
+						fn: function(data) {
+							for(var i = 0; i < data.length; i++) {
+								vm.data.push(data[i]);
+							}
+							if($this.endPullupToRefresh)$this.endPullupToRefresh(data.length < 20);
+						}
+					},true)
+				}
+			})
+		</script>
+	</body>
+
+</html>

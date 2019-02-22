@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/new_goods.css" />
+		<link rel="stylesheet" type="text/css" href="../css/cropper.min.css" />
+	</head>
+	<body>
+		<header class="header absolute">
+				<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+				<div class="title">商品编辑</div>
+			</header>
+		<div id="app" v-cloak>
+			<div class="mui-scroll-wrapper" v-show="!onOff"> 
+				<div class="mui-scroll">
+					<div class="main" >
+						<div class="scover">
+							<div class="fl img-row relative" v-if="myscover!=''" @tap="choiceImage(false,375,400)">
+								<img :src="myscover" />
+								<div class="deleteImg absolute" @tap.stop="deleteImg(false)"></div>
+							</div>
+							<div class="addImg table" v-if="myscover==''" @tap="choiceImage(false,375,400)">
+								<div class="table-cell">
+									<div class="add relative"></div>
+									<p>商品封面图1张</p>
+								</div>
+							</div>
+						</div>
+						<ul class="boox">
+							<li class="fl img-row relative" v-for="(item,i) in imgList" @tap="choiceImage(true,375,400,i)">
+								<img :src="item.img" />
+								<div class="deleteImg absolute" @tap.stop="deleteImg(false,i)"></div>
+							</li>
+							<div class="addImg table" @tap.stop="choiceImage(true,375,400)" v-if="imgList.length<6">
+								<div class="table-cell">
+									<div class="add relative"></div>
+									<p>最多可传6张</p>
+								</div>
+							</div>
+						</ul>
+						<ul class="from">
+							<li class="from-list">
+								<div class="name sup relative fl">
+									名称：
+								</div>
+								<div class="input-row">
+									<input type="text" v-model="title" placeholder="请勿输入非自主品牌名" />
+								</div>
+							</li>
+							<li class="from-list">
+								<div class="name sup relative fl">
+									货号：
+								</div>
+								<div class="input-row">
+									<input type="text" v-model="goodsno" />
+								</div>
+							</li>
+							<li class="from-list">
+								<div class="name relative fl">
+									面料：
+								</div>
+								<div class="input-row">
+									<input type="text" v-model="material" />
+								</div>
+							</li>
+							<li class="istail" v-if="istail==1">
+								<div class="name sup relative fl">
+									价格：
+								</div>
+								<div class="istail-row">
+									<div class="input-row relative">
+										<input type="number" v-model="retailprice" placeholder="市场价" />
+									</div>
+									<div class="input-row relative">
+										<input type="number" v-model="wholesaleprice" placeholder="批发价" />
+									</div>
+									<div class="input-row relative">
+										<input type="number" v-model="packingprice" placeholder="装包价 " />
+									</div>
+								</div>
+
+							</li>
+							<li class="from-list">
+								<div v-bind:class="[{'checkbox-active':istail==2},'fl checkbox relative']" @click="istail=istail==1?2:1">
+									添加到尾货处理
+								</div>
+								<div class="checkbox-input relative fl" v-if="istail==2">
+									<input type="number" class="absolute" v-model="tailprice" placeholder="处理价" />
+								</div>
+							</li>
+						</ul>
+						<div class="from margin">
+							<div class="from-item">
+								<div class="fl name relative">
+									颜色：
+								</div>
+								<ul class="input-box">
+									<li class="input-list" v-for="(item,i) in color">
+										<div class="fl input">
+											{{item}}
+										</div>
+										<!--<input type="text" class="fl" maxlength="3" v-bind:value="item" />-->
+										<button class="fl" @tap="deleteValue(color,i)" @touchstart='preventDefault($event)'>删除</button>
+									</li>
+									<div class="input-list">
+										<input type="text" v-model="mycolor" maxlength="3" @keydown.enter="addColor" class="fl" />
+										<button class="addBtn fl" @tap="addColor" @touchstart='preventDefault($event)'>确定</button>
+									</div>
+								</ul>
+							</div>
+							<div class="from-item">
+								<div class="fl name relative">
+									尺码：
+								</div>
+								<ul class="input-box">
+									<li class="input-list" v-for="(item,i) in size">
+										<div class="fl input">
+											{{item}}
+										</div>
+										<!--<input type="text" v-model="item" class="fl" unselectable="on" />-->
+										<button class="fl" @tap="deleteValue(size,i)" @touchstart='preventDefault($event)'>删除</button>
+									</li>
+									<div class="input-list">
+										<input type="text" v-model="mysize" maxlength="5" @keydown.enter='addsize' class="fl" />
+										<button class="addBtn fl" @tap='addsize' @touchstart='preventDefault($event)'>确定</button>
+									</div>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<button class="send absolute" @tap.stop="addGoods">保存</button>
+			<div class="img-content absolute" v-show="onOff">
+				<div id="imgBox">
+					<img id="image_id" />
+				</div>
+				<div class="footer absolute">
+					<button class="confirm fl" @tap.stop='onOff=!onOff'>取消</button>
+					<button class="confirm fr" @tap.stop="sureImage">确定</button>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/cropper.min.js"></script>
+		<script type="text/javascript" src="../../js/mobileSelect.js"></script>
+		<script type="text/javascript" src="../js/new_goods.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,38 @@
+.header {
+	width: 100vw;
+	height: 0.46rem;
+	line-height: .46rem;
+	color: #070707;
+	top: 0;
+	z-index: 10;
+	font-size: 0.18rem;
+	background: #FFFFFF;
+}
+.header .mui-action-back {
+	width: .5rem;
+	/* background: greenyellow; */
+	padding-left: 0.2rem;
+	font-size: 0.16rem;
+}
+.header .search-row{
+	margin-left: .5rem;
+	line-height: .46rem;
+	height: 100%;
+	font-size: .16rem;
+	padding-right: .2rem;
+}
+.header .search-row input{
+	-webkit-appearance:none;
+	width: 100%;
+	font-size: .16rem;
+	border-radius:0;
+	border-bottom: 1px solid #F27428;
+}
+.main{
+	padding-top: .56rem;
+}
+.tag{
+	padding: 0.2rem;
+	text-align: center;
+	font-size: 0.16rem;
+}

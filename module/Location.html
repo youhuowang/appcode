@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>优货网</title>
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css">
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/location.css" />
+		<link href="../css/mui.indexedlist.css" rel="stylesheet" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<div class="head fixed">
+				<div class="block mui-action-back fl iconfont icon-back"></div>
+				<div class="search relative fl">
+					<div class="input-row translateY absolute">
+						<div class="icon fl iconfont icon-sousuo"></div>
+						<div class="search-box">
+							<form onsubmit="return false">
+								<input type="search" v-model="keyword" @keyup.enter="searchCity" placeholder="输入城市名或城市首字母" />
+							</form>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="main">
+				<div class="location" v-if="address!=''">
+					<span class="iconfont icon-xingzhuanggongnengtubiao- fl"></span>{{address}}
+				</div>
+				<div class="hot-location" v-if="hotCity!=''">
+					<div class="title">热门城市</div>
+					<ul class="hot-location-box">
+						<li class="list fl overflow" @click="getCounty(list.id,list.name)" v-for="list in hotCity">{{list.name}}</li>
+					</ul>
+				</div>
+			</div>
+			<div class="mui-content">
+				<div id='list' class="mui-indexed-list">
+					<div class="mui-indexed-list-search mui-input-row mui-search"></div>
+					<div class="mui-indexed-list-bar">
+						<a>A</a>
+						<a>B</a>
+						<a>C</a>
+						<a>D</a>
+						<a>E</a>
+						<a>F</a>
+						<a>G</a>
+						<a>H</a>
+						<a>I</a>
+						<a>J</a>
+						<a>K</a>
+						<a>L</a>
+						<a>M</a>
+						<a>N</a>
+						<a>O</a>
+						<a>P</a>
+						<a>Q</a>
+						<a>R</a>
+						<a>S</a>
+						<a>T</a>
+						<a>U</a>
+						<a>V</a>
+						<a>W</a>
+						<a>X</a>
+						<a>Y</a>
+						<a>Z</a>
+					</div>
+					<div class="mui-indexed-list-alert"></div>
+					<div class="mui-indexed-list-inner">
+						<div class="mui-indexed-list-empty-alert">没有数据</div>
+						<ul class="mui-table-view">
+							<li v-for="item in city" @click="getCounty(item.id,item.name)" :data-group="item.name" v-bind:class="[item.id==''?'mui-table-view-divider mui-indexed-list-group':'mui-table-view-cell mui-indexed-list-item']">{{item.name}}</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script src="../js/mui.indexedlist.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript" src="../js/address.js"></script>
+	</body>
+
+</html>

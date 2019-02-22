@@ -1,0 +1,141 @@
+.header{
+	width: 100vw;
+	height: 0.46rem;
+	line-height: .46rem;
+	background: #FFFFFF;
+	color: #5B5B5B;
+	top: 0;
+	z-index: 10;
+	border-bottom: 1px solid #EFEFEF;
+}
+.none{
+	display: none;
+}
+.header .icon-row{
+	font-size: 0.2rem;
+}
+.header .mui-action-back{
+	padding-left: 0.2rem;
+}
+.header .title{
+	height: 100%;
+	margin-left: 0.5rem;
+	margin-right: 0.5rem;
+	text-align: center;
+	font-size: 0.18rem;
+}
+.main{
+	padding-top: .46rem;
+	padding-bottom: 0.5rem;
+}
+.list{
+	margin-top: 0.1rem;
+}
+.address-top{
+	height: 0.7rem;
+	background: #FFFFFF;
+	margin-bottom: 1px;
+}
+.address-top .portrait{
+	width: 0.67rem;
+	height: 100%;
+}
+.address-top .img{
+	width: 0.48rem;
+	height: 0.48rem;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	line-height: .48rem;
+	border-radius: 50%;
+	background:#EFEFEF;
+	text-align: center;
+	font-size: 0.24rem;
+	color: #BBBBBB;
+}
+.address-details{
+	margin-left: .67rem;
+	height: 100%;
+	padding-right: 0.2rem;
+}
+.address-details-box{
+	left: 0;
+	right: .2rem;
+	top: 50%;
+	transform: translateY(-50%);
+}
+.address-details-phone{
+	font-size: 0.14rem;
+	font-weight: 400;
+	color: #222222;
+}
+.address-details-phone span{
+	padding-left: 0.1rem;
+}
+.address-details-address{
+	font-size: 0.12rem;
+	color: #4E4D4D;
+	font-weight: 400;
+}
+.address-button{
+	height: 0.42rem;
+	line-height: 0.42rem;
+	background: #FFFFFF;
+	padding-right: 0.2rem;
+}
+.label{
+	height: 100%;
+	padding-left: 0.3rem;
+}
+.checkbox{
+	width: 0.28rem;
+	height: 100%;	
+}
+.checkbox:before{
+	content: '';
+	width: 0.22rem;
+	height: 0.22rem;
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	background: url(../img/weigouxuan.png)no-repeat;
+	background-size: 100% 100%;
+}
+.label-active .checkbox:before{
+	background: url(../img/gouxuan.png)no-repeat;
+	background-size: 100% 100%;
+}
+.label .text{
+	font-size: 0.14rem;
+	color: #4E4D4D;
+	font-weight: 400;
+}
+.label-active .text{
+	color: #F27428;
+}
+.button-row{
+	font-size: 0.14rem;
+	color: #4E4D4D;
+	font-weight: 400;
+	margin-left: 0.11rem;
+}
+.button-row a{
+	color: #4E4D4D;
+}
+.button-row .iconfont{
+	font-size: 0.16rem;
+}
+.newAdd{
+	width: 100vw;
+	height: 0.48rem;
+	bottom: 0;
+	line-height: 0.48rem;
+	text-align: center;
+	font-size: 0.16rem;
+	font-weight: 400;
+	background: #F5A623;
+}
+.newAdd a{
+	color: #FFFFFF;
+}

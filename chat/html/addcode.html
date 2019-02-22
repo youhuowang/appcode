@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/addcode.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+	</head>
+
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">添加好友</div>
+		</header>
+		<div class="main" id="app" v-cloak>
+			<div class="title">验证信息：</div>
+			<div class="code">
+				<input type="text" v-model="data.checkmess" placeholder="我是*****"/>
+			</div>
+			<div class="title">备注：</div>
+			<div class="input-row">
+				<input type="text" v-model="data.notename"/>
+			</div>
+			<div class="title">分组：</div>
+			<ul>
+				<li v-bind:class="[{'active':data.group==1},'checkbox relative']" @touchend='data.group=1'>普通买主</li>
+				<li v-bind:class="[{'active relative':data.group==2},'checkbox']" @touchend='data.group=2'>批发买主</li>
+				<li v-bind:class="[{'active relative':data.group==3},'checkbox']" @touchend='data.group=3'>装包买主</li>
+			</ul>
+			<button class="send fixed" @click="send">发送</button>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				mui.init({
+					beforeback: function() {　　　　
+						var list = plus.webview.currentWebview().opener(); //获得父页面的webview 	　　　　
+						mui.fire(list, 'refresh'); //触发父页面的自定义事件(refresh),从而进行刷新	
+						return true; //返回true,继续页面关闭逻辑
+					}
+				});
+				var vm = new Vue({
+					el: "#app",
+					data: {
+						data: {
+							userid: yh.getQueryString('id'),
+							group: 1, //1：表示不分组，2：表示批发组，3：表示装包组
+							checkmess: "", //验证消息
+							notename: "" //备注名称
+						}
+					},
+					methods: {
+						send: function(url, id) {
+							yh.ajax({
+								url: "/addFriend",
+								type: "POST",
+								data:vm.data,
+								fn: function(data) {
+									mui.toast('请求发送成功');
+									mui.back();
+								}
+							}, true);
+						}
+					}
+				});
+
+			})
+		</script>
+	</body>
+
+</html>

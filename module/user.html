@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/user_details.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+		<link rel="stylesheet" type="text/css" href="../checkin/css/cropper.min.css" />
+	</head>
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">个人资料 </div>
+		</header>
+		<div id="app" v-cloak>
+			<div v-show="!onOff" class="main">
+				<div class="portrait table">
+					<div class="table-cell">
+						<div class="fl name">
+							头像
+						</div>
+						<div class="fr user-img" @click="choiceImage">
+							<img :src="data.headpic||'../img/icon/portrait.png'" />
+						</div>
+					</div>
+				</div>
+				<ul>
+					<li class="list">
+						<div class="name fl relative">
+							手机号<i></i>
+						</div>
+						{{data.phone}}
+					</li>
+					<li class="list">
+						<div class="name fl relative">
+							昵称<i></i>
+						</div>
+						<div class="input-row">
+							<input type="text" v-model="nikename" placeholder="" />
+							<button class="fr" v-show="isnikename" @tap="editName">确定</button>
+						</div>
+					</li>
+					<li class="list">
+						<div class="name fl relative">
+							性别<i></i>
+						</div>
+						<div class="sex">
+							<div v-bind:class="[{'label-active':data.sex==1},'fl label relative']" @click="editSex(1)">
+								男
+							</div>
+							<div v-bind:class="[{'label-active':data.sex==2},'fl label relative']" @click="editSex(2)">
+								女
+							</div>
+						</div>
+					</li>
+					<li class="list link relative" @click="editPassword">
+						修改密码：
+					</li>
+				</ul>
+			</div>
+
+			<div class="img-content relative" v-show="onOff">
+				<div id="imgBox">
+					<img id="image_id" />
+				</div>
+				<div class="footer absolute">
+					<button class="confirm fl" @touchend='onOff=!onOff'>取消</button>
+					<button class="confirm fr" @touchend="sureImage">确定</button>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../checkin/js/cropper.min.js"></script>
+		<script>
+			mui.plusReady(function() {
+				var vm = new Vue({
+					el: '#app',
+					data: {
+						myimage: '',
+						onOff: false,
+						waiting: '',
+						token: '',
+						data:'',
+						nikename:'',
+					},
+					methods: {
+						choiceImage: function() {
+							var editButtons = new Array();
+							editButtons.push({
+								title: "拍照上传",
+								style: "default"
+							});
+							editButtons.push({
+								title: "从相册选择",
+								style: "default"
+							});
+							plus.nativeUI.actionSheet({
+								cancel: "取消",
+								buttons: editButtons
+							}, function(e) {
+								var index = e.index;
+								switch(index) {
+									case 1:
+										vm.captureImage(); //拍照
+										break;
+									case 2:
+										vm.selectImage(); //相册选择
+										break;
+								}
+							});
+							vm.initImageCropper(); //初始化裁切组件
+						},
+						initImageCropper: function() {
+							vm.myimage = $("#image_id").cropper({
+								aspectRatio: 1 / 1,
+								autoCropArea: 1,
+								dragMode: "move", //设置移动图片、重新绘制选图区域
+								movable: true, //是否允许移动裁切框
+								crop: function(data) { //初始化					
+									window._scaleX = data.scaleX;
+									window._scaleY = data.scaleY;
+								}
+							});
+						},
+						captureImage: function() { //拍照
+							var cmr = plus.camera.getCamera(2);
+							cmr.captureImage(
+								function(path) { //将图片地址转换					
+									plus.io.resolveLocalFileSystemURL(path, function(entry) {
+										var newPath = entry.toLocalURL() + "?version=" + Math.random();
+										vm.onOff = true;
+										vm.loadImage(newPath);
+									});
+								},
+								function(error) {
+//									mui.toast(error.message);
+								}, {
+									filename: "_documents/"
+								}
+							);
+						},
+						selectImage: function() { //选择图片
+							plus.gallery.pick(function(path) {
+								vm.onOff = true;
+								vm.loadImage(path);
+							}, function(e) {
+//								mui.toast("没有选择图片.");
+							});
+						},
+						loadImage: function(path) { //确定选择图片							
+							vm.myimage.src = path;
+							vm.myimage.cropper("replace", path);
+						},
+						sureImage: function() { //剪切
+							vm.waiting = plus.nativeUI.showWaiting();
+							var dataURL = vm.myimage.cropper("getCroppedCanvas");
+							var imgUrl = dataURL.toDataURL("image/jpeg", .1);
+							vm.onOff = false;
+							vm.putb(imgUrl, );
+						},
+						putb: function(pic) {
+							/*把头部的data:image/jpeg;base64,去掉。（注意：base64后面的逗号也去掉）*/
+							picBase = pic.substring(23);
+
+							function fileSize(str) { /*通过base64编码字符流计算文件流大小函数*/
+								var fileSize;
+								if(str.indexOf('=') > 0) {
+									var indexOf = str.indexOf('=');
+									str = str.substring(0, indexOf); //把末尾的’=‘号去掉
+								}
+								fileSize = parseInt(str.length - (str.length / 8) * 2);
+								return fileSize;
+							}
+							var url = "http://upload.qiniup.com/putb64/" + fileSize(picBase);
+							var xhr = new XMLHttpRequest();
+							xhr.onreadystatechange = function(list) {
+								if(xhr.readyState == 4) {
+									var keyText = JSON.parse(xhr.responseText);
+									if(keyText.key) {										
+										vm.editHeadpic(pic,keyText.key);
+									} else {
+										vm.getQiniuUpTokenAndUrl(); //token过期重新获取							
+										mui.toast('上传失败，请稍后重试');
+										vm.waiting.close();
+									}									
+								}
+							}
+							xhr.open("POST", url, true);
+							xhr.setRequestHeader("Content-Type", "application/octet-stream");
+							xhr.setRequestHeader("Authorization", "UpToken " + vm.token);
+							xhr.send(picBase)
+						},
+						editHeadpic:function(pic,k){//修改头像
+							yh.ajax({
+								url: "/editHeadpic",
+								type: "POST",
+								data:{
+									headpic:k,
+								},
+								fn: function(data) {
+									vm.data.headpic=pic;
+									mui.toast("操作成功");
+									vm.waiting.close();
+								}
+							}, true)
+						},
+						editName:function(){
+							if(!/^[\u2E80-\u9FFF]+$/.test(vm.nikename)||vm.nikename.length<=1){
+								mui.toast("昵称只能是汉字,且不能低于两个");
+								return;
+							}
+							if(vm.nikename==''||vm.nikename.length<=1){
+								
+							};
+							yh.ajax({
+								url: "/editName",
+								type: "POST",
+								data:{
+									'nikename':vm.nikename,
+								},
+								fn: function(data) {	
+									vm.data.nikename=vm.nikename;
+									mui.toast("修改成功");
+								}
+							}, true)
+						},
+						editSex:function(sex){//修改性别
+							vm.data.sex=sex;
+							yh.ajax({
+								url: "/editSex",
+								type: "POST",
+								data:{
+									'sex':sex,
+								},
+								fn: function(data) {	
+									vm.data.sex=sex;
+								}
+							}, true,function(){
+								mui.toast("修改失败")
+								vm.data.sex=sex==1?2:1;
+							})
+						},
+						editPassword:function(){
+							mui.openWindow('../checkin/html/modify_password.html?name=user', 'modify_password.html', {
+								styles: {
+									popGesture: "close"
+								},
+							});
+						},
+						getQiniuUpTokenAndUrl: function() {
+							yh.ajax({
+								url: "/getQiniuUpTokenAndUrl",
+								type: "GET",
+								fn: function(data) {
+									vm.token = data.token;
+								}
+							}, true)
+						},
+					},
+					computed:{
+						isnikename:function(){
+							return this.nikename!=this.data.nikename?true:false;
+						}
+					}
+				});
+				vm.getQiniuUpTokenAndUrl();
+				yh.ajax({
+					url: "/userInfo",
+					type: "GET",
+					fn: function(data) {
+						vm.data=data;
+						vm.nikename=data.nikename;
+					}
+				}, true);
+				mui.init({
+					beforeback: function() {　　　　
+						var list = plus.webview.currentWebview().opener();
+						mui.fire(list, 'refresh'); 
+						return true; 
+					}
+				});
+			})
+		</script>
+	</body>
+
+</html>

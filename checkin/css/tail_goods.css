@@ -1,0 +1,101 @@
+.header {
+	width: 100vw;
+	height: 0.46rem;
+	line-height: .46rem;
+	background: #FFFFFF;
+	color: #5B5B5B;
+	top: 0;
+	z-index: 10;
+	border-bottom: 1px solid #EFEFEF;
+}
+
+.header .icon-row {
+	font-size: 0.2rem;
+}
+
+.header .mui-action-back {
+	padding-left: 0.2rem;
+}
+
+.header .icon-youixn {
+	padding-right: .2rem;
+}
+
+.header .title {
+	position: absolute;
+	height: 100%;
+	left: 0.5rem;
+	right: 0.5rem;
+	text-align: center;
+	font-size: 0.18rem;
+}
+.main{
+	padding-top: 0.66rem;
+}
+.price{
+	width: 3.38rem;
+	height: 0.6rem;
+	line-height: .6rem;
+	border-radius: 0.08rem;
+	text-align: center;
+	font-size: 0.24rem;
+	color: #FFFFFF;
+	margin: 0 auto;
+	background: #F27428;
+	box-shadow:0px 0px 7px 1px rgba(38,36,35,0.11);
+}
+.title,.list{
+	height: 0.5rem;
+	line-height: .5rem;
+	padding:0 .2rem;
+	font-size: 0.18rem;
+	color: #2B2B2B;
+}
+.list{
+	font-size: 0.14rem;
+	color: #5B5A5A;
+	background: #FFFFFF;
+	margin-bottom: 1px;
+}
+.list-img{
+	width: 0.5rem;
+}
+.list-img img{
+	display: inline-block;
+	width: 0.36rem;
+	height: 0.36rem;
+}
+.list_name{
+	margin-left: .5rem;
+}
+.label:before{
+	content: '请选择处理商品类别，选择后，不可更改';
+	line-height: 0.18rem;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	font-size: 0.1rem;
+	color: #B0B0B0;
+	
+}
+.label:after{
+	content: '';
+	width: .2rem;
+	height: .2rem;
+	position: absolute;
+	top: 50%;
+	right: 0;
+	margin-top: -.1rem;
+	background: url(../../img/icon/nexts.png)no-repeat;
+	background-size: 100% 100%;
+}
+.tag{
+	margin: 0.1rem 0;
+	padding-left: 0.2rem;
+	font-size: 0.14rem;
+	color: #232424;
+}
+.tag a{
+	display: inline-block;
+	color:#F27428;
+}

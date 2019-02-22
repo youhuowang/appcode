@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/information.css" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<div class="header relative fixed">
+				<div class="title absolute">优信</div>
+				<a link href="../chat/html/friends.html" v-bind:class="[{addFriend:addFriend},'header-bars fr iconfont icon-lianxiren relative']"></a>
+			</div>
+			<ul class="main" id="OA_task_1">
+				<div class="search">
+					<div class="search-row">
+						<div class="search-row-icon iconfont icon-sousuo fl"></div>
+						<a link class="search-row-input" href="../chat/html/friends_search.html">
+							<!-- <form onsubmit="return false">
+								<input type="search" placeholder="搜索" />
+							</form> -->
+							搜索
+						</a>
+					</div>
+				</div>
+				<li class="mui-table-view-cell contacts-list table contacts" v-for="item in list" v-if="item.conversationType==6" @tap="gomessage(item)">
+					<div class="mui-slider-right mui-disabled">
+						<a class="mui-btn mui-btn-red" @tap.stop="removeConversation($event,item)">删除</a>
+					</div>
+					<div class=" mui-slider-handle">
+						<div class="contacts-list-portrait fl">
+							<img src="../img/notice.png" />
+						</div>
+						<div class="contacts-list-con">
+							<div class="contacts-list-title">
+								<div class="contacts-list-title">{{item.latestMessage.content.extra.name}}<span class="time fr">{{format(item.latestMessage.sentTime)}}</span></div>
+								<div class="contacts-list-news">
+									<div class="badge fr" v-if="item.unreadMessageCount!=0">
+										<span class="mui-badge">{{item.unreadMessageCount}}</span>
+									</div>
+									<div class="tag overflow">{{item.latestMessage.content.content}}</div>
+								</div>
+							</div>
+						</div>
+				</li>
+				<li class="contacts-list mui-table-view-cell " v-for="item in list" v-if="item.conversationType!=6" @tap="gomessage(item)">
+					<div class="mui-slider-right mui-disabled">
+						<a class="mui-btn mui-btn-red" @tap.stop="removeConversation($event,item)">删除</a>
+					</div>
+					<div class="mui-slider-handle ">
+						<div class="contacts-list-portrait fl">
+							<img :src="item.latestMessage.content.extra.id==item.latestMessage.targetId?item.latestMessage.content.extra.img:item.latestMessage.content.extra.friend_headpic" />
+						</div>
+						<div class="contacts-list-con">
+							<div class="contacts-list-title">
+								{{item.latestMessage.content.extra.id==item.latestMessage.targetId?item.latestMessage.content.extra.name:item.latestMessage.content.extra.friend_name}}
+								<span class="time fr">{{format(item.latestMessage.sentTime)}}</span></div>
+							<div class="contacts-list-news">
+								<div class="badge fr" v-if="item.unreadMessageCount!=0">
+									<span class="mui-badge">{{item.unreadMessageCount}}</span>
+								</div>
+								<div class="tag overflow">
+									{{item.latestMessage.messageType=='TextMessage'?item.latestMessage.content.content:item.latestMessage.messageType=='ImageMessage'?"图片":"语音"}}
+								</div>
+							</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			</div>
+			<script type="text/javascript" src="../js/mui.min.js"></script>
+			<script type="text/javascript" src="../js/aes.js"></script>
+			<script type="text/javascript" src="../js/app.js"></script>
+			<script type="text/javascript" src="../chat/js/rongyun.js"></script>
+			<script type="text/javascript" src="../chat/js/getmsg.js"></script>
+			<script type="text/javascript" src="../js/Vue.js"></script>
+			<script type="text/javascript">
+				var vm;
+				mui.plusReady(function() {
+					if(!plus.storage.getItem('volume')){
+						plus.storage.setItem("volume",'true');
+						plus.device.setVolume(.8);
+					}
+					var clickNum = 0;
+					mui.back = function(event) {
+						clickNum++;
+						clickNum > 1 ? plus.runtime.quit() : mui.toast("再按一次退出应用");
+						setTimeout(function() {
+							clickNum = 0
+						}, 2000);
+						return false;
+					}
+					var pause = false;
+					document.addEventListener("pause", function() {
+						pause = true;
+						console.log('切换到后台');
+					}, false);
+					document.addEventListener('resume', function() {
+						pause = false;
+						console.log('前台');
+					}, false);
+					vm = new Vue({
+						el: "#app",
+						data: {
+							list: [],
+							webview: plus.webview.getWebviewById(plus.runtime.appid),
+							addFriend: localStorage.getItem("addFriend"),
+						},
+						mounted: function() {
+							mui('body').on('tap', 'a[link]', function() {
+								var href = this.getAttribute('href');
+								var id = this.getAttribute("data-wid") || href;
+								if(id.indexOf("?") != -1) id = id.split("?")[0];
+								if(href && ~href.indexOf('.html')) mui.openWindow(href, id, {
+									styles: {
+										popGesture: "close"
+									},
+								});
+							});
+						},
+						format:function(tim){
+							return format(tim);
+						},
+						methods: {
+							gomessage: function(item) {
+								var num = 0;
+								var id = item.latestMessage.targetId == item.latestMessage.content.extra.id ? item.latestMessage.senderUserId : item.latestMessage.content.extra.friend_id;
+								RongIMClient.getInstance().clearUnreadCount(item.latestMessage.senderUserId == 'system' ? 6 : 1, id, {
+									onSuccess: function() {
+										RongIMClient.getInstance().getTotalUnreadCount({ //所有会话总未读数。
+											onSuccess: function(count) {
+												num += count;
+												vm.webview.evalJS("showmessage(" + num + ")");
+												mui.openWindow('../chat/html/message.html?id=' + id, 'msg.html', {
+													styles: {
+														top: 0,
+														bottom: 0,
+														background:'#FFFFFF',
+														popGesture:'none'
+													},
+												})
+											},
+											onError: function(error) {}
+										});
+									},
+									onError: function(error) {
+										// error => 清除未读消息数错误码。
+									}
+								});
+							},
+							removeConversation: function(e, item) {
+								mui.swipeoutClose(e.srcElement.parentNode.parentNode);
+								var id = item.latestMessage.targetId == item.latestMessage.content.extra.id ? item.latestMessage.senderUserId : item.latestMessage.content.extra.friend_id;
+								mui.confirm('确认删除该条记录？', '提示', ['确认', '取消'], function(e) {
+									if(e.index == 0) {
+										RongIMClient.getInstance().removeConversation(item.latestMessage.senderUserId == 'system' ? 6 : 1, id, {
+											onSuccess: function(bool) {},
+											onError: function(error) {
+												mui.toast('删除失败');
+											}
+										});
+									} else {}
+								});
+							},
+							delFriend: function(id) {//删除好友
+								RongIMClient.getInstance().removeConversation(1,id.toString(), {
+									onSuccess: function(bool) {
+										vm.delmsglist(id);
+									},
+									onError: function(error) {
+										mui.toast('删除失败');
+									}
+								});
+							},
+							delmsglist: function(id) {//删除聊天记录
+								var targetId = id.toString();
+								RongIMLib.RongIMClient.getInstance().getHistoryMessages(1, targetId, null, 2, {
+									onSuccess: function(list, hasMsg) {
+										if(list.length==0){
+											mui.toast("没有可删除的聊天记录");
+											return;
+										}
+										var params = {
+											conversationType: RongIMLib.ConversationType.PRIVATE, // 会话类型
+											targetId: targetId, // 目标 Id
+											timestamp: list[1].sentTime // 清除时间点
+										};
+										RongIMLib.RongIMClient.getInstance().clearRemoteHistoryMessages(params, {
+											onSuccess: function() {
+												mui.toast("操作成功")
+											},
+											onError: function(error) {
+												console.log(error);
+											}
+										});
+									},
+									onError: function(error) {
+										mui.toast("获取聊天记录失败");
+									}
+								});
+							},
+							playAudio: function() { //提示音
+								if(plus.device.getVolume() == 0) {
+									plus.device.vibrate(300); //播放失败时 震动
+									return;
+								}
+								if(vm.isplay) vm.player.stop(); //播放中  停止重新开始
+								vm.player = plus.audio.createPlayer('_www/img/075888piCqB9.mp3');
+								vm.isplay = true;
+								vm.player.play(function() {
+									vm.isplay = false;
+								}, function(e) {
+									plus.device.vibrate(300); //播放失败时 震动
+								});
+							}
+						},
+					});
+					getConnect(plus.storage.getItem('rytoken'), function(msg) {
+						if(msg.content.extra.id == 'system' && msg.content.extra.type == 1) {
+							vm.addFriend = 1;
+							localStorage.setItem("addFriend", "1");
+						}
+						if(msg.targetId != msg.content.extra.id || msg.senderUserId == plus.storage.getItem('senderUserId')) { //判断消息来源
+							var id = msg.targetId != msg.content.extra.id ? msg.targetId : plus.storage.getItem('senderUserId');
+							var num = 0;
+							RongIMClient.getInstance().clearUnreadCount(msg.senderUserId == 'system' ? 6 : 1, id, {
+								onSuccess: function() {
+									RongIMClient.getInstance().getTotalUnreadCount({ //所有会话总未读数。
+										onSuccess: function(count) {
+											num += count;
+											vm.webview.evalJS("showmessage(" + num + ")");
+										},
+										onError: function(error) {}
+									});
+								},
+								onError: function(error) {
+									// error => 清除未读消息数错误码。
+								}
+							});
+							return;
+						};
+						if(pause) { //判断运行环境
+							var con=msg.messageType=='TextMessage'?msg.content.content:msg.messageType=='ImageMessage'?'图片消息':'你收到一条语音消息';
+							plus.push.createMessage(con, '', {
+								cover: true,
+								sound: "none",
+								title: msg.content.extra.name,
+							})
+						};
+						vm.playAudio();
+						vm.webview.evalJS("showmessage(1)"); ///更新nav上小圆点显示状态
+					}, function() {
+						RongIMClient.getInstance().getConversationList({
+							onSuccess: function(list) {
+								vm.list = list;
+							},
+							onError: function(error) {
+								// do something...
+							}
+						}, null);
+					})
+					window.addEventListener('refresh', function(e) {
+						vm.addFriend = localStorage.getItem("addFriend");
+					});
+
+				})
+				function delFriend(id) {
+					vm.delFriend(id);
+				}
+				function delmsglist(id) {
+					vm.delmsglist(id);
+				}
+			</script>
+	</body>
+
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/addGood_friend.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+	</head>
+
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">手机联系人</div>
+		</header>
+		<div id="app" class="main" v-cloak>
+			<!--<a href="friends_search.html" class="search-row relative">
+				<div class="search absolute">
+					<i class="iconfont icon-sousuo"></i> 手机号
+				</div>
+			</a>-->
+			<div class="getphone" v-if="addlist!=''">
+				已加入优货网
+			</div>
+			<ul class="user-row">
+				<!--<div class="user-tag">A</div>-->
+				<li class="user-list relative" v-for="item in addlist" @click="openWindow('userdetails.html?id='+item.userid,'userdetails.html')">
+					<div class="fl portrait">
+						<img :src="item.headpic" />
+					</div>
+					<div class="details fl">
+						<div class="table">
+							<div class="table-cell">
+								<div class="name overflow">{{item.name}}</div>
+								<p class="phone">{{item.phone}}</p>
+							</div>
+						</div>
+					</div>
+					<button class="absolute button" @click.stop="openWindow('addcode.html?id='+item.userid,'addcode.html')">
+						添加
+					</button>
+				</li>
+			</ul>
+			<div class="getphone">
+				邀请加入
+			</div>
+			<ul class="boox">
+				<li class="list relative" v-for="item in phonelist">
+					<div class="name fl overflow">
+						{{item.name}}
+					</div>
+					<button class="button absolute" @tap="smsTest(item.phone)">邀请</button>
+					<div class="phone">
+						{{item.phone}}
+					</div>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				window.addEventListener('refresh', function(e) {
+					pullfresh(); //返回刷新
+				});
+				mui.init({
+					beforeback: function() {　　　　
+						var list = plus.webview.currentWebview().opener(); //获得父页面的webview 	　　　　
+						mui.fire(list, 'refresh'); //触发父页面的自定义事件(refresh),从而进行刷新	
+						return true; //返回true,继续页面关闭逻辑
+					}
+				});
+				var vm = new Vue({
+					el: "#app",
+					data: {
+						addlist: '',
+						phonelist:'',
+					},
+					mounted:function(){
+						mui('body').on('tap','a[href]', function() {
+							var href = this.getAttribute('href');
+							var id = this.getAttribute("data-wid") || href;
+							if(id.indexOf("?") != -1) id = id.split("?")[0];
+							mui.openWindow(href,id,{
+								styles: {
+									popGesture: "close",
+									background:'#FFFFFF',
+								},
+							});
+						})
+					},
+					methods: {
+						openWindow:function(url,id){
+							mui.openWindow(url,id,{
+								styles: {
+									popGesture: "close",
+									background:'#FFFFFF',
+								},
+							});
+						},
+						smsTest:function(phone){
+							var msg = plus.messaging.createMessage(plus.messaging.TYPE_SMS);
+							msg.to = [phone];
+							msg.body = '我正在使用优货网APP，进货方便，出货快速，还免费开店。邀你来一起体验';
+							plus.messaging.sendMessage( msg );
+						}
+					}
+				});
+				function pullfresh() {
+					var waiting = plus.nativeUI.showWaiting();
+					plus.contacts.getAddressBook(plus.contacts.ADDRESSBOOK_PHONE, function(addressbook) {
+						addressbook.find(["displayName", "phoneNumbers"], function(contacts) {
+							var list = [],
+								value, phonelist;
+							for(var i = 0; i < contacts.length; i++) {
+								phonelist = [];
+								for(var j = 0; j < contacts[i].phoneNumbers.length; j++) {
+									list.push({
+										name: contacts[i].displayName,
+										phone: contacts[i].phoneNumbers[j].value,
+									});
+								}
+							}
+							waiting.close();
+							if(list.length==0)return;
+							yh.ajax({
+								url: "/getMobileContacts",
+								type: "POST",
+								data:{
+									list:JSON.stringify(list),
+								},
+								fn: function(data) {
+									vm.addlist = data.addlist;
+									vm.phonelist=data.phonelist;
+								}
+							},true);
+							
+						}, function() {
+							waiting.close();
+							mui.toast("获取电话簿失败 ");
+						}, {
+							multiple: true
+						});
+					}, function(e) {
+						waiting.close();
+						mui.toast("获取电话簿失败 " + e.message);
+					});
+				};
+				pullfresh();
+
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,110 @@
+.header{
+	height: 0.46rem;
+	line-height: 0.46rem;
+	top: 0;
+	z-index: 10;
+	padding-left: 0.14rem;
+	/*padding-top: 0.14rem;*/
+}
+.mui-action-back{
+	/*display: inline-block;*/
+	/*line-height: 0.2rem;
+	font-size: 0.18rem;
+	padding: 0.06rem;
+	background: rgba(0,0,0,.5);
+	border-radius: 50%;*/
+	color: #FFFFFF;
+}
+.head{
+	height: 1.97rem;
+	overflow: hide;
+	
+}
+.head-bg,.head-box{
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+}
+.head-box{
+	background:rgba(0,0,0,.5);
+}
+.head-box .table-cell{
+	width: 100%;
+}
+.head-bg img{
+	width: 100%;
+	height: auto;
+	top: 50%;
+}
+.head-box .table-row{
+	width: 1.39rem;
+	height: 100%;
+}
+
+.portrait{
+	width: .97rem;
+	height: 100%;
+	margin-left: 1.39rem;
+	margin-right: 1.39rem;
+}
+.portrait img{
+	width: 0.97rem;
+	height: 0.97rem;
+	border-radius: 100%;
+	margin: 0 auto;
+	box-shadow: 0 0 0.02rem 1px #fbcbaf;
+}
+.head-box .num{
+	color:#FFFFFF;
+	font-size: 0.32rem;
+	font-weight: bold;
+	text-align: center;
+	
+}
+
+.head-box .num .tag{
+	overflow: hidden;
+	height: 0.17rem;
+	line-height: 0.17rem;
+	left: 50%;
+	bottom:-.17rem;
+	font-size: 0.12rem;
+	color: #FFFFFF;
+	white-space : normal nowrap 
+}
+.list-box{
+	padding-top: 0.2rem;
+}
+.list{
+	height: 0.56rem;
+	line-height: .56rem;
+	background: #FFFFFF;
+	padding: 0 0.2rem;
+	margin-bottom: 0.1rem;
+	font-size: 0.14rem;
+	color: #545353;
+}
+.list img{
+	display: inline-block;
+	width: 0.44rem;
+	height: 0.44rem;
+	border-radius: 100%;
+	margin-right: 0.12rem;
+	overflow: hidden;
+}
+.list button{
+	display: inline-block;
+	width: 0.81rem;
+	height: 0.25rem;
+	line-height: 0.25rem;
+	color: #F27428;
+	font-size: 12px;
+	border-radius:0.12rem;
+	border:1px solid;	
+	background: #FFFFFF;
+}
+.list .color{
+	color: #A4A4A4;
+}

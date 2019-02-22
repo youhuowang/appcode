@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/follow.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app" v-cloak>
+			<header class="header fixed">
+				<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+				<div class="title">最近访问</div>
+			</header>
+			<div class="main">
+				<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<ul class="follow">
+							<li class="follow-list table" v-for="(item,index) in data" @tap="goshop(item.id)">
+								<div class="table-cell">
+									<div class="img fl">
+										<img :src="item.appbanner" />
+									</div>
+									<div class="follow-list-con">
+										<div class="fl follow-list-details">
+											<div class="name">{{item.shopname}}</div>
+											<p><span class="iconfont icon-dianhua"></span>{{item.phone}}</p>
+											<p><span class="iconfont icon-dingwei"></span>{{item.market}} </p>
+										</div>
+										<div class="fr follow-list-btn">
+											<div v-bind:class="[{available:item.follow==1},'follow-button']" @tap.stop="follow(index,item.id,item.follow)">{{isfollow(item.follow)}}</div>
+											<div class="Add-to" @tap.stop="addFriend(item)">{{isfriend(item.friend)}}</div>
+										</div>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<script src="js/swiper.min.js"></script>
+		<script type="text/javascript" src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/Vue.js"></script>
+		<script type="text/javascript" src="../js/aes.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				
+				var vm = new Vue({
+					el: "#app",
+					data: {
+						data: [],
+						page: 0,
+					},
+					methods: {
+						goshop: function(id) {
+							location.href = 'shopindex.html?id=' + id;
+						},
+						follow: function(i, id, n) { //关注切换
+							var url = n == 1 ? '/followShop' : '/delFollowShop';
+							yh.ajax({
+								url: url,
+								data: {
+									'shopid': id,
+								},
+								type: "post",
+								fn: function(data) {
+									vm.data[i].follow = n == 1 ? 2 : 1;
+								}
+							}, true);
+
+						},
+						addFriend:function(item){
+							if(item.friend!=1){
+								mui.toast("对方已经是你的好友了");
+								return;
+							}
+							mui.openWindow('../chat/html/userdetails.html?id='+item.user_id,'userdetails.html', {
+								styles: {
+									popGesture: "close"
+								},
+							});
+						}
+					},
+					computed: {
+						isfollow() {
+							return function(n) {
+								return n == 1 ? "+关注" : '已关注';
+							}
+						},
+						isfriend() {
+							return function(n) {
+								return n == 1 ? '添加好友' : '已是好友';
+							}
+						}
+					}
+				})
+				mui.init({ //上拉加载 下拉刷新		
+					pullRefresh: {
+						container: '#pullrefresh',
+						up: {
+							auto: true,
+							contentrefresh: '正在加载...',
+							callback: pullupRefresh,
+						}
+					}
+				});
+				function pullupRefresh() {
+					vm.page++;
+					yh.ajax({
+						url: "/recent",
+						data: {
+							page: vm.page,
+							num: 15,
+						},
+						type: "get",
+						fn: function(data) {
+							data.forEach(function(value, i) {　
+								vm.data.push(value);
+							})
+							mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.length < 15);
+						}
+					}, true)
+				}
+			})
+		</script>
+	</body>
+
+</html>

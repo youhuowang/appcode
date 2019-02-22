@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="tab_top.css" />
+		<script type="text/javascript" src="../js/web.js"></script>
+	</head>
+
+	<body>
+		<div id="app">
+			<header class="header fixed">
+				<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+				<div class="fr icon-row iconfont icon-youixn"></div>
+				<div class="title">订单列表</div>
+			</header>
+			<div class="mui-content">
+				<div id="slider" class="mui-slider mui-fullscreen">
+					<div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+						<div class="mui-scroll">
+							<a class="mui-control-item mui-active relative" href="#item1mobile" data-wid="order_query-1.html">
+								全部订单
+							</a>
+							<a class="mui-control-item relative" href="#item2mobile" data-wid="order_query-2.html">
+								线上支付
+							</a>
+							<a class="mui-control-item relative" href="#item3mobile" data-wid="order_query-3.html">
+								延期付款
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script src="../js/webviewGroup.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			mui.plusReady(function() {
+				var _self = plus.webview.currentWebview();
+				var entrytype=yh.getQueryString('id');
+				var group = new webviewGroup(_self.id, {
+					items: [{
+						id: "order_query-1.html",
+						url: "order_query.html?id="+entrytype+'&ordertype=1',
+						extras: {}
+					}, {
+						id: "order_query-2.html",
+						url: "order_query.html?id="+entrytype+'&ordertype=2',
+						extras: {}
+					}, {
+						id: "order_query-3.html",
+						url: "order_query.html?id="+entrytype+'&ordertype=3',
+						extras: {}
+					}],
+					onChange: function(obj) {
+						var c = document.querySelector(".mui-control-item.mui-active");
+						if(c) {
+							c.classList.remove("mui-active");
+						}
+						var target = document.querySelector(".mui-scroll .mui-control-item:nth-child(" + (parseInt(obj.index) + 1) + ")");
+						target.classList.add("mui-active");
+						if(target.scrollIntoView) {
+							target.scrollIntoView();
+						}
+					}
+				});
+				mui(".mui-scroll").on("tap", ".mui-control-item", function(e) {
+					var wid = this.getAttribute("data-wid");
+					group.switchTab(wid);
+				});
+				mui(".header").on("tap", ".icon-youixn", function(e) {
+					var webview = plus.webview.getWebviewById(plus.runtime.appid);
+					if(webview) {
+						webview.hide('none');
+						mui.fire(webview, 'refresh', {
+							index: 1
+						});
+						webview.show('slide-in-rihgt');
+					}
+					plus.webview.currentWebview().hide();
+					plus.webview.currentWebview().close();
+				});
+			});
+			mui.back = function() {
+				var _self = plus.webview.currentWebview();
+				_self.close("auto");
+			}
+		</script>
+	</body>
+
+</html>

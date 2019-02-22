@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/app.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/index.css" />
+		<script type="text/javascript" src="../../js/web.js"></script>
+	</head>
+
+	<body>
+		<header class="header fixed">
+			<div class="fl mui-action-back icon-row iconfont icon-back"></div>
+			<div class="title">设置</div>
+		</header>
+		<div class="main" id="app" v-cloak>
+			<ul class="box">
+				<li class="list relative">
+					通过手机号查找到我
+					<div v-bind:class="[{'switch-active':data.isfind==1},'switch active absolute translateY ']" @tap="findUser(data.isfind)">
+						<div class="switch-handle absolute translateY"></div>
+					</div>
+				</li>
+				<!--<li class="list relative">
+					新消息推送
+					<div v-bind:class="[{'switch-active':data.pushmess==1},'switch active absolute translateY']" @tap="pushMess(data.pushmess)">
+						<div class="switch-handle absolute translateY"></div>
+					</div>
+				</li>-->
+			</ul>
+			<ul class="box">
+				<li class="list" link='helpCenter.html'>帮助中心</li>
+				<li class="list" link='about.html'>关于优货</li>
+				<li class="list" link='userFeedback.html'>意见反馈</li>
+				<li class="list" @tap="removeItem">退出登录</li>
+				<li class="list" @tap="clear">注销账号</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/Vue.js"></script>
+		<script type="text/javascript" src="../../js/aes.js"></script>
+		<script type="text/javascript" src="../../js/app.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				mui.init({
+					beforeback: function() {
+						var list = plus.webview.currentWebview().opener();
+						mui.fire(list, 'refresh');
+						return true;
+					}
+				});
+				var vm = new Vue({
+					el: '#app',
+					data: {
+						data: '',
+					},
+					methods: {
+						removeItem: function() { //退出登录
+							mui.confirm('确定要退出吗？', '提示', ['取消', '确定'], function(e) {
+								if (e.index == 1) {
+									plus.storage.clear(); //清空数据
+									plus.runtime.restart(); //重新启动
+								}
+							}, 'div')
+						},
+						back: function() {
+							var webview = plus.webview.getWebviewById(plus.runtime.appid);
+							if (webview) {
+								webview.hide('none');
+								mui.fire(webview, 'refresh', {
+									index: 0
+								});
+								webview.show('slide-in-rihgt');
+							}
+							plus.webview.currentWebview().hide();
+							plus.webview.currentWebview().close();
+						},
+						pushMess: function(onOff) {
+							yh.ajax({
+								url: "/pushMess",
+								type: "POST",
+								data: {
+									type: onOff == 1 ? 2 : 1,
+								},
+								fn: function(reg) {
+									vm.data.pushmess = onOff == 1 ? 2 : 1;
+								}
+							}, true);
+						},
+						findUser: function(isfind) {
+							yh.ajax({
+								url: "/findUser",
+								type: "POST",
+								data: {
+									type: isfind == 1 ? 2 : 1,
+								},
+								fn: function(reg) {
+									vm.data.isfind = isfind == 1 ? 2 : 1;
+								}
+							}, true);
+						},
+						removeFile:function(friendid){
+							var url=friendid?'_documents/msg/' +plus.storage.getItem('userid')+"/"+friendid + '.txt':'_documents/msg/' +plus.storage.getItem('userid') + '.txt';
+							plus.io.resolveLocalFileSystemURL(url, function(entry) {
+								entry.remove(function() {
+									console.log('删除成功')
+								}, function(e) {
+									console.log(JSON.stringify(e))
+								})
+							}, function(e) {
+								alert("Resolve file URL failed: " + e.message);
+							});
+						},
+						clear: function() {
+							mui.confirm('注销账号会删除用户所有数据，是否继续？', '警告', ['取消', '确定'], function(e) {
+								if(e.index == 1) {
+									yh.ajax({
+										url: "/cancellationAccount",
+										type: "POST",
+										fn: function() {
+											plus.io.requestFileSystem(plus.io.PUBLIC_DOCUMENTS, function(fs) {//删除聊天会话文件
+												fs.root.getFile("msg/" + plus.storage.getItem('userid') + ".txt", {
+														create: true,
+														exclusive: false
+													},
+													function(fileEntry) {
+														fileEntry.file(function(file) {
+															var reader = new plus.io.FileReader();
+															reader.onloadend = function(e) {
+																list = e.target.result == '' ? [] : eval('(' + e.target.result + ')');
+																for (var i = 0; i < vm.list.length; i++) {
+																	vm.removeFile(list[i].senderUserId);
+																}
+															};
+															reader.readAsText(file);
+														}, function(e) {
+															alert(e.message);
+														});
+													},
+													function(e) {
+														alert('111' + e.message);
+													});
+											}, function(e) {
+												alert(e.message);
+											});
+											vm.removeFile();//删除聊天列表文件
+											plus.storage.clear(); //清空数据
+											plus.runtime.restart(); //重新启动
+										}
+									}, true);
+									
+								}
+							}, 'div')
+						}
+					}
+				});
+				mui(".box").on('tap', 'li[link]', function() {
+					var href = this.getAttribute('link');
+					var id = this.getAttribute("data-wid") || href;
+					if (id.indexOf("?") != -1) id = id.split("?")[0];
+					mui.openWindow(href, id, {
+						styles: {
+							popGesture: "close",
+							background:'#FFFFFF',
+						},
+					});
+				})
+				yh.ajax({
+					url: "/userSet",
+					type: "GET",
+					fn: function(reg) {
+						vm.data = reg;
+					}
+				}, true);
+			})
+		</script>
+	</body>
+
+</html>

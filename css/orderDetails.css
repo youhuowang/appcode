@@ -1,0 +1,60 @@
+.location{
+	height: .75rem;
+}
+.location:before{
+	height: 0;
+}
+.location .location-row:before{
+	display: none;
+}
+.location .location-row{
+	padding-right: 0;
+}
+.orderDetails{
+	line-height: 0.17rem;
+	padding:0.11rem 0.2rem;
+	/*padding-bottom: 0.27rem;*/
+	background: #FFFFFF;
+	font-size: 0.12rem;
+	color: #1E1E1E;
+}
+.shop-title:before{
+	content: '';
+	width: 100%;
+	height: 0.07rem;
+	position: absolute;
+	left: 0;
+	top: 0;
+	background: url(../img/shop_title.png)no-repeat;
+	background-size: 100% 100%;
+}
+.shop-title .iconfont{
+	font-size: 0.14rem;
+}
+.button{
+	margin-top: 0.15rem;
+	padding: 0 0.2rem;
+	font-size: 0;
+	text-align: right;
+}
+.button-list{
+	display: inline-block;
+	height: 0.26rem;
+	line-height: .26rem;
+	border-radius: .13rem;	
+	padding: 0 0.1rem;
+	font-size: 0.14rem;
+	color: #BBBBBB;
+	border: 1px solid;
+	margin-left: 0.1rem;
+}
+.active{
+	color:#F27428;
+}
+.spec{
+	padding:0.1rem 0.2rem;
+	font-size: 0.14rem;
+	background: #FFFFFF;
+	margin-bottom: 1px;
+	line-height: 0.2rem;
+}
